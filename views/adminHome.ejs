@@ -1,0 +1,38 @@
+<%- include('../views/include/header.ejs')%>
+<%- include('../views/include/nav.ejs')%>
+
+	<div class="container-sm" style="display: flex; flex-direction: column;">
+		<div class="card " style="margin: 3% 0%; padding: 3%;">
+			<h1>Welcome <%= name %>  </h1>
+		</div>
+
+		<div class="card" >
+			<div class="card-header">
+				Qiuz's 
+			</div>
+			<% if (quizs.length  != 0) { %>
+			  <ul class="list-group list-group-flush">
+				
+				<% quizs.forEach(function(obj) { %>
+
+					<table style="width: 100%; text-align: center; ">
+						<tr>
+						  <td style="width: 50%;"><%= obj.quizName %></td> 
+						  <td style="width: 25%;"><a  style=" text-decoration: none;color: black;" href="/admin/addQuestion/<%= obj.quiz_id %>"><i class="fa fa-edit"></i></a></a></td>
+						  <td style="width: 25%;"><a  style=" text-decoration: none;color: black;" href="/admin/deleteQuizName/<%= obj._id %>"><i class="fa fa-trash"></i></a></a></td>
+						</tr>
+					  </table>
+				 
+			   <% }); %> 
+			  </ul>
+			  <%} else { %> 
+				<div style="margin: 1rem;" class="alert alert-danger" role="alert">
+					Quiz are not created At! <a href="/admin/create">click here</a>
+				  </div>
+
+				<% } %> 
+			</div>
+		
+	</div>
+
+	<%- include('../views/include/footer.ejs')%>

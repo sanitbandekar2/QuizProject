@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/quiz.css">
+    <title>random quiz</title>
+
+    <div class="home-box custom-box">
+      <h1>instruction</h1>
+      <p>total number of questions:<span class="total-question"></span></p>
+      <button type="button" class="btn" onclick="startQuiz()">start</button>
+    </div>
+
+    <div class="quiz-box custom-box hide">
+      <header>
+        <div class="title">BCA</div>
+
+        <div class="timer">
+          <div class="time_left_txt">Time Left</div>
+          <div class="timer_sec">15</div>
+        </div>
+
+        <div class="time_line"></div>
+      </header>
+      <div class="question-number"></div>
+      <div class="question-text"></div>
+
+      <div class="option-container"></div>
+
+      <div class="next-question-btn">
+        <button type="button" class="btn" onclick="next()">next</button>
+      </div>
+      <div class="answers-indicator"></div>
+    </div>
+
+
+    <div class="result-box custom-box hide">
+      <h1>quiz reults</h1>
+      <table>
+        <tr>
+          <td>total questions</td>
+          <td><span class="total-question"> </span></td>
+        </tr>
+        <tr>
+          <td>attempt</td>
+          <td><span class="total-attempt"> </span></td>
+        </tr>
+        <tr>
+          <td>correct</td>
+          <td><span class="total-correct"> </span></td>
+        </tr>
+        <tr>
+          <td>wrong</td>
+          <td><span class="total-wrong"> </span></td>
+        </tr>
+        <tr>
+          <td>percentage</td>
+          <td><span class="percentage"> </span></td>
+        </tr>
+        <tr>
+          <td>your total score</td>
+          <td><span class="total-score"> </span></td>
+        </tr>
+      </table>
+      <button type="button" class="btn" onclick="tryAgainQuiz()">
+        try again
+      </button>
+      <!-- <button type="button" class="btn" onclick="goToHome()">go to home</button> -->
+      <button type="button" class="btn" ><a class="btn-home" href="../home.html"> go to home </a></button>
+    </div>
+    <script>
+      
+      const dataString = '<%- JSON.stringify(data) %>'; // test is now a valid js object
+      const quiz = JSON.parse(dataString);
+      console.log(quiz);
+    </script>
+  <!-- questions.js -->
+  <!-- <script>
+    // array of objects
+    const quiz = [
+      {
+        q: "which month comes right before june",
+        options: ["may", "september", "july", "august"],
+        answer: 0,
+      },
+      {
+        q: "what is the color of bannana",
+        options: ["red", "blue", "orange", "yellow"],
+        answer: 3,
+      },
+      {
+        q: "3 + 4 = 7 ?",
+        options: ["true", "false"],
+        answer: 0,
+      },
+      {
+        q: "what time do we have breakfast?",
+        options: ["in the afternoon", "in the morning", "in the night"],
+        answer: 1,
+      },
+      {
+        q: "what is 2 + 6 ?",
+        options: ["2", "4", "6", "8"],
+        answer: 3,
+      },
+      {
+        q: " what is a javac in java programming?",
+        options: ["compiler", "interpreter", "comparater", "repeater"],
+        answer: 0,
+      },
+      {
+        q: " ________interpretor used in java programming?",
+        options: ["javac", "java", "javah", "jdb"],
+        answer: 1,
+      },
+      {
+        q: "what language runs in a web browser?",
+        options: ["java", "C", "python", "javascript"],
+        answer: 3,
+      },
+      {
+        q: " what does css stand for?",
+        options: [
+          "Central style sheets",
+          "Cascading style sheets",
+          "Cascading simple sheets",
+          "Cars SUVs sailboats",
+        ],
+        answer: 1,
+      },
+      {
+        q: "what does HTML stand for?",
+        options: [
+          "Hypertext markup language",
+          "Hypertext markdown language",
+          "Hyperloop machine language",
+          "helicopters terminals motorboats lamborginis",
+        ],
+        answer: 0,
+      },
+      {
+        q: "what year was javascript launched?",
+        options: ["1996", "1995", "1994", "none of the above"],
+        answer: 1,
+      },
+      {
+        q: "inside which HTML element do we put the javascript ?",
+        options: [
+          "&ltscript&gt",
+          "&ltjavascript&gt",
+          "&ltscripting&gt",
+          "&ltjs&gt",
+        ],
+        answer: 0,
+      },
+      {
+        q: "What is the correct syntax for referring to an external script called 'xxx.js' ?",
+        options: [
+          '&ltscript href="xxx.js"&gt',
+          '&ltscript name="xxx.js"&gt',
+          '&ltscript src="xxx.js"&gt',
+        ],
+        answer: 2,
+      },
+      {
+        q: " The external JavaScript file must contain the &ltscript> tag.?",
+        options: ["true", "false"],
+        answer: 1,
+      },
+      {
+        q: 'How do you write "Hello World" in an alert box?',
+        options: [
+          'alertBox("Hello World");',
+          'msg("Hello World");',
+          'alert("Hello World");',
+          'msgBox("Hello World");',
+        ],
+        answer: 2,
+      },
+      {
+        q: "How do you create a function in JavaScript ?",
+        options: [
+          "function myFunction()",
+          "function:myFunction()",
+          "function = myFunction()",
+        ],
+        answer: 0,
+      },
+      {
+        q: "How do you call a function named &quot;myFunction&quot;?",
+        options: [
+          "call function myFunction()",
+          "call myFunction()",
+          "myFunction()",
+        ],
+        answer: 2,
+      },
+      {
+        q: "How to write an IF statement in JavaScript?",
+        options: [
+          "if (i = 5) then",
+          "if (i == 5) then",
+          "if (i == 5)",
+          " if (i = 5)",
+        ],
+        answer: 2,
+      },
+      {
+        q: "Which of the following is a disadvantage of using JavaScript?",
+        options: [
+          "Client-side JavaScript does not allow the reading or writing of files.",
+          "JavaScript can not be used for Networking applications because there is no such support available.",
+          "JavaScript doesn't have any multithreading or multiprocess capabilities.",
+          "All of the following",
+        ],
+        answer: 3,
+      },
+      {
+        q: "How does a WHILE loop start?",
+        options: [
+          "while i = 1 to 10",
+          "while (i &lt;= 10; i++)",
+          "while (i &lt;= 10)",
+        ],
+        answer: 2,
+      },
+      {
+        q: "How does a FOR loop start?",
+        options: [
+          "for (i = 0; i &lt;= 5)",
+          "for (i = 0; i &lt;= 5; i++)",
+          "for i = 1 to 5",
+          "for (i &lt;= 5; i++)",
+        ],
+        answer: 1,
+      },
+      {
+        q: "How can you add a comment in a JavaScript?",
+        options: [
+          "//This is a comment",
+          "&sbquo;This is a comment",
+          "&lt;!--This is a comment--&gt;",
+        ],
+        answer: 0,
+      },
+      {
+        q: "How to insert a comment that has more than one line?",
+        options: [
+          "/*This comment has more than one line*/",
+          "//This comment has more than one line//",
+          "&lt;!--This comment has more than one line--&gt;",
+        ],
+        answer: 0,
+      },
+      {
+        q: "What is the correct way to write a JavaScript array?",
+        options: [
+          "var colors = (1:&quot;red&quot;, 2:&quot;green&quot;, 3:&quot;blue&quot;)",
+          "var colors = [&quot;red&quot;, &quot;green&quot;, &quot;blue&quot;]",
+          "var colors = 1 = (&quot;red&quot;), 2 = (&quot;green&quot;), 3 = (&quot;blue&quot;)",
+          "var colors = &quot;red&quot;, &quot;green&quot;, &quot;blue&quot;",
+        ],
+        answer: 1,
+      },
+      {
+        q: "How do you round the number 7.25, to the nearest integer?",
+        options: [
+          "rnd(7.25)",
+          "Math.round(7.25)",
+          "Math.rnd(7.25)",
+          "round(7.25)",
+        ],
+        answer: 1,
+      },
+      {
+        q: "How do you find the number with the highest value of x and y?",
+        options: [
+          "Math.max(x, y)",
+          "Math.ceil(x, y)",
+          "top(x, y)",
+          "ceil(x, y)",
+        ],
+        answer: 0,
+      },
+      {
+        q: "JavaScript is the same as Java.",
+        options: ["true", "false"],
+        answer: 1,
+      },
+      {
+        q: "Which event occurs when the user clicks on an HTML element?",
+        options: ["onchange", "onclick", "onmouseclick", "onmouseover"],
+        answer: 1,
+      },
+      {
+        q: "How do you declare a JavaScript variable?",
+        options: ["var carName;", "variable carName;", "v carName;"],
+        answer: 0,
+      },
+      {
+        q: "Which operator is used to assign a value to a variable?",
+        options: ["*", "-", "=", "x"],
+        answer: 2,
+      },
+      {
+        q: "What will the following code return: Boolean(10 &gt; 9)",
+        options: ["NaN", "false", "true"],
+        answer: 2,
+      },
+      {
+        q: "Is JavaScript case-sensitive?",
+        options: ["No", "Yes"],
+        answer: 1,
+      },
+
+      // {
+      //     q:
+      //     options:[],
+      //     answer:
+      // },
+    ];
+  </script> -->
+
+  <!-- app.js -->
+  <script>
+    // for generating x number of questions from the array declare a const varaible and asign that x value and replace quiz.length to the varaible name...(questionLimit)
+
+    const questionNumber = document.querySelector(".question-number");
+    const questionText = document.querySelector(".question-text");
+    const optionContainer = document.querySelector(".option-container");
+    const answersIndicatorContainer =
+      document.querySelector(".answers-indicator");
+    const homeBox = document.querySelector(".home-box");
+    const quizBox = document.querySelector(".quiz-box");
+    const resultBox = document.querySelector(".result-box");
+    const questionLimit = 5; //if u want all question (const questionLimit = quiz.length;)
+    let questionCounter = 0;
+    let currentQuestion;
+    let availableQuestions = [];
+    let availableOptions = [];
+    let corectAnswers = 0;
+    let attempt = 0;
+
+    // push the questions into availableQuestions array
+    function setAvailableQuestions() {
+      const totalQuestion = quiz.length;
+      for (let i = 0; i < totalQuestion; i++) {
+        availableQuestions.push(quiz[i]);
+      }
+    }
+
+    // set question number and question andd options
+    function getNewQuestion() {
+      console.log(availableQuestions);
+      //    set question number
+      // questionNumber.innerHTML = "Question" + (questionCounter + 1) + " of " + quiz.length;
+      questionNumber.innerHTML =
+        "Question" + (questionCounter + 1) + " of " + questionLimit;
+
+      const questionIndex =
+        availableQuestions[
+          Math.floor(Math.random() * availableQuestions.length)
+        ];
+
+      currentQuestion = questionIndex;
+      questionText.innerHTML = currentQuestion.q;
+      // console.log(questionIndex);
+      // get the position of 'questionIndex' from the availableQuestion array;
+      const index1 = availableQuestions.indexOf(questionIndex);
+      // remove the 'questionIndex' from the availableQuestion Array, so that the question does not repeat
+      availableQuestions.splice(index1, 1);
+      // show question image if 'img' property exists
+      if (currentQuestion.hasOwnProperty("img")) {
+        const img = document.createElement("img");
+        img.src = currentQuestion.img;
+        questionText.appendChild(img);
+      }
+
+      // set Options
+      // get the length of options
+      const optionLen = currentQuestion.options.length;
+      // push options to availableoptions array
+      for (let i = 0; i < optionLen; i++) {
+        availableOptions.push(i);
+      }
+
+      optionContainer.innerHTML = "";
+      let animationDelay = 0.15;
+      // create options in html
+      for (let i = 0; i < optionLen; i++) {
+        //random option
+        const optonIndex =
+          availableOptions[Math.floor(Math.random() * availableOptions.length)];
+        // console.log(optonIndex);
+        // get the position from 'optionIndex' from the availableOptions array
+        const index2 = availableOptions.indexOf(optonIndex);
+        //remove the 'optionIndex' from the availableOptions array, so that the option does not repeat
+        availableOptions.splice(index2, 1);
+        // console.log(optionIndex);
+        // console.log(availableOptions);
+        const option = document.createElement("div");
+        option.innerHTML = currentQuestion.options[optonIndex];
+        option.id = optonIndex;
+        option.style.animationDelay = animationDelay + "s";
+        animationDelay = animationDelay + 0.15;
+        option.className = "option";
+        optionContainer.appendChild(option); //error before 5.19 ep 3
+        option.setAttribute("onclick", "getResult(this)");
+      }
+      questionCounter++;
+    }
+    startQuiz;
+
+    //get the result of current attempt question
+    function getResult(element) {
+      const id = parseInt(element.id);
+      //get the answer by comparring the id of clicked option
+      // console.log(typeof id)
+      clearInterval(counter); //clear counter
+      clearInterval(counterLine); //clear counterLine
+
+      if (id === currentQuestion.answer) {
+        // console.log("annswer is correct")
+        //set the green color to the correct option
+        element.classList.add("correct");
+        //add the indicator to correct
+        updateAnswerIndicator("correct");
+        corectAnswers++;
+        // console.log("correct:"+corectAnswers);
+      } else {
+        //set the red color to the incorrect option
+        // console.log("answer is wrong");
+        element.classList.add("wrong");
+        //add the indicator to wrong
+        updateAnswerIndicator("wrong");
+        //if the answer is incorrect  then show the correct option by adding green color to the correct option
+        const optionLen = optionContainer.children.length;
+        for (let i = 0; i < optionLen; i++) {
+          if (
+            parseInt(optionContainer.children[i].id) === currentQuestion.answer
+          ) {
+            optionContainer.children[i].classList.add("correct");
+          }
+        }
+      }
+      attempt++;
+      unclickableOptions();
+    }
+
+    //make all the options unclickable once the user selects one option
+    function unclickableOptions() {
+      const optionLen = optionContainer.children.length;
+      for (let i = 0; i < optionLen; i++) {
+        optionContainer.children[i].classList.add("already-answered");
+      }
+    }
+
+    // this function is not working //
+    function AnswersIndicator() {
+      answersIndicatorContainer.innerHTML = "";
+      // const totalQuestion = quiz.length;
+      const totalQuestion = questionLimit;
+      for (let i = 0; i < totalQuestion; i++) {
+        const indicator = document.createElement("div");
+        answersIndicatorContainer.appendChild(indicator);
+      }
+    }
+    //------------------------------//
+
+    function updateAnswerIndicator(markType) {
+      answersIndicatorContainer.children[questionCounter - 1].classList.add(
+        markType
+      );
+    }
+
+    function next() {
+      clearInterval(counter); //clear counter
+      clearInterval(counterLine); //clear counterLine
+      startTimer(15); //calling startTimer function
+      startTimerLine(widthValue); //calling startTimerLine function
+      timeText.textContent = "Time Left"; //change the timeText to Time Left
+      // if(questionCounter === quiz.length){
+      if (questionCounter === questionLimit) {
+        // console.log("quiz over"
+        quizOver();
+      } else {
+        getNewQuestion();
+      }
+    }
+
+    function quizOver() {
+      //  hide quiz quizbox
+      quizBox.classList.add("hide");
+      // show result Box
+      resultBox.classList.remove("hide");
+      quizResult();
+    }
+    // get the quiz result
+    function quizResult() {
+      // resultBox.querySelector(".total-question").innerHTML = quiz.length;
+      resultBox.querySelector(".total-question").innerHTML = questionLimit;
+      resultBox.querySelector(".total-attempt").innerHTML = attempt;
+      resultBox.querySelector(".total-correct").innerHTML = corectAnswers;
+      resultBox.querySelector(".total-wrong").innerHTML =
+        attempt - corectAnswers;
+      // const percentage= (corectAnswers/quiz.length)*100;
+      const percentage = (corectAnswers / questionLimit) * 100;
+      resultBox.querySelector(".percentage").innerHTML =
+        percentage.toFixed(2) + "%";
+      resultBox.querySelector(".total-score").innerHTML =
+        corectAnswers + "/" + questionLimit;
+      // resultBox.querySelector(".total-score").innerHTML = corectAnswers+ "/" +quiz.length;
+    }
+
+    function resetQuiz() {
+      questionCounter = 0;
+      corectAnswers = 0;
+      attempt = 0;
+      availableQuestions = [];
+
+      timeValue = 15;
+      // que_count = 0;
+      // que_numb = 1;
+      // userScore = 0;
+      widthValue = 0;
+      clearInterval(counter); //clear counter
+      clearInterval(counterLine); //clear counterLine
+      // startTimer(timeValue); //calling startTimer function
+      // startTimerLine(widthValue); //calling startTimerLine function
+      timeText.textContent = "Time Left"; //change the text of timeText to Time Left
+    }
+
+    function tryAgainQuiz() {
+      // hide the result box
+      resultBox.classList.add("hide");
+      // show the quiz box
+      quizBox.classList.remove("hide");
+      resetQuiz();
+      startQuiz();
+    }
+
+    /*----this part will be not be neccessary-----
+    function goToHome() {
+      // hide the result box
+      resultBox.classList.add("hide");
+      // show the quiz box
+      homeBox.classList.remove("hide");
+      resetQuiz();
+    }
+    ---------------------------------------------*/
+
+    // #### starting point #####
+
+    // window.onload = function(){
+    function startQuiz() {
+      //hide home box
+      homeBox.classList.add("hide");
+      // unhide quix box
+      quizBox.classList.remove("hide");
+      // first we will set all questions in availableQuestions array
+
+      setAvailableQuestions();
+      // second we will call getNewQuestion(); funtion
+      getNewQuestion();
+      //to create indicator of answers
+      AnswersIndicator();
+
+      startTimer(15); //calling startTimer function
+      startTimerLine(0); //calling startTimerLine function
+      timeText.textContent = "Time Left"; //change the text of timeText to Time Left
+    }
+
+    // const questions=10;
+    window.onload = function () {
+      // homeBox.querySelector(".total-question").innerHTML = questions;
+      homeBox.querySelector(".total-question").innerHTML = questionLimit;
+    };
+
+    // timer
+    const time_line = document.querySelector("header .time_line");
+    const timeText = document.querySelector(".timer .time_left_txt");
+    const timeCount = document.querySelector(".timer .timer_sec");
+
+    let timeValue = 15;
+    let counter;
+    let counterLine;
+    let widthValue = 0;
+
+    function startTimer(time) {
+      counter = setInterval(timer, 1000);
+      function timer() {
+        timeCount.textContent = time; //changing the value of timeCount with time value
+        time--; //decrement the time value
+        if (time < 9) {
+          //if timer is less than 9
+          let addZero = timeCount.textContent;
+          timeCount.textContent = "0" + addZero; //add a 0 before time value
+        }
+        if (time < 0) {
+          //if timer is less than 0
+          clearInterval(counter); //clear counter
+          timeText.textContent = "Time Off"; //change the time text to time off
+          const optionLen = optionContainer.children.length;
+        }
+
+        if (time == 0) {
+          // option.setAttribute("getResult(this)");
+          // // set the red color to the incorrect option
+          // // console.log("answer is wrong");
+          // element.classList.add("wrong");
+          // //add the indicator to wrong
+          updateAnswerIndicator("wrong");
+          attempt++;
+          unclickableOptions();
+          const optionLen = optionContainer.children.length;
+          for (let i = 0; i < optionLen; i++) {
+            if (
+              parseInt(optionContainer.children[i].id) ===
+              currentQuestion.answer
+            ) {
+              optionContainer.children[i].classList.add("correct");
+            }
+          }
+
+          
+        }
+      }
+    }
+
+    // // make all the options unclickable once the user selects one option
+    // function unclickableOptis() {
+    //   const optionLen = optionContainer.children.length;
+    //   for (let i = 0; i < optionLen; i++) {
+    //     optionContainer.children[i].classList.add("already-answered");
+    //   }
+    // }
+
+    function startTimerLine(time) {
+      counterLine = setInterval(timer, 29);
+      function timer() {
+        time += 1; //upgrading time value with 1
+        time_line.style.width = time + "px"; //increasing width of time_line with px by time value
+        if (time > 563) {
+          //if time value is greater than 549
+          clearInterval(counterLine); //clear counterLine
+        }
+      }
+    }
+
+    function queCounter(index) {
+      //creating a new span tag and passing the question number and total question
+      let totalQueCounTag =
+        "<span><p>" +
+        index +
+        "</p> of <p>" +
+        questions.length +
+        "</p> Questions</span>";
+      bottom_ques_counter.innerHTML = totalQueCounTag; //adding new span tag inside bottom_ques_counter
+    }
+  </script>
+<%- include('../views/include/footer.ejs')%>

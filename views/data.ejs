@@ -1,0 +1,51 @@
+<%- include('../views/include/header.ejs')%>
+<nav class="navbar navbar-expand-lg bg-light">
+	<div class="container-fluid">
+	  <a class="navbar-brand" href="#">Quiz</a>
+	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarText">
+		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+		  <li class="nav-item">
+			<a class="nav-link active" aria-current="page" href="/profile">Home</a>
+		  </li>
+		
+		</ul>
+		<span class="navbar-text">
+			<a class="nav-link" href="/logout">Logout</a>
+		</span>
+	  </div>
+	</div>
+  </nav>
+  <div class="container text-center">
+		<div class="card " style="margin: 3%; padding: 3%;">
+			<h1>Welcome <%= name %></h1>
+		</div>
+	
+			<div class="row align-items-start">
+			  <div class="col">
+				<div class="card">
+					<a href="/quiz/cs" class="aLink">
+						<h2>CS</h2>
+					</a>
+				</div>
+			  </div>
+			  <div class="col">
+				<div class="card">
+					<a href="/quiz/bca" class="aLink">
+						<h2>BCA</h2>
+					</a>
+				</div>
+			  </div>
+			  <div class="col">
+				<div class="card">
+					<a href="/quiz/gen" class="aLink">
+						<h2>GEN</h2>
+					</a>
+				</div>
+			  </div>
+			</div>
+	</div>
+
+	<%- include('../views/include/footer.ejs')%>
