@@ -11,7 +11,11 @@ const {
 } = require("../helper/validation_schema");
 
 router.get("/", function (req, res, next) {
-  return res.render("adminsignup.ejs");
+  if (req.session.adminId) {
+    res.redirect("/admin/profile");
+  } else {
+    return res.render("adminsignup.ejs");
+  }
 });
 
 router.post("/", function (req, res, next) {
@@ -67,7 +71,11 @@ router.post("/", function (req, res, next) {
 });
 
 router.get("/login", function (req, res, next) {
-  return res.render("adminLogin.ejs");
+  if (req.session.adminId) {
+    res.redirect("/admin/profile");
+  } else {
+    return res.render("adminLogin.ejs");
+  }
 });
 
 router.post("/login", async (req, res, next) => {
@@ -159,6 +167,7 @@ router.get("/addQuestion/:id", function (req, res, next) {
               qname: data.quizName,
               depart: data.department,
               questions: result,
+              url: "/admin/",
             });
           }
         });
@@ -199,7 +208,7 @@ router.post("/addQuestion", async function (req, res, next) {
           department: result.department,
           q: result.q,
           answer: result.answer,
-          options: result.option,
+          options: result.options,
         });
         newQuiz.save(function (err, quiz) {
           if (err) console.log(err);
@@ -214,10 +223,59 @@ router.post("/addQuestion", async function (req, res, next) {
     next(error);
   }
 });
+router.post("/editQuestion", async function (req, res, next) {
+  try {
+    let update = req.body;
+    const id = update.id;
+
+    const data = {
+      quiz_id: update.quiz_id,
+      department: update.department,
+      q: update.q,
+      answer: update.answer,
+      options: update.options,
+    };
+    const inputs = await questionSchema.validateAsync(data);
+    console.log("inputs", inputs);
+
+    const result = await Questiondb.findByIdAndUpdate(id.trim(), inputs);
+    console.log("result", result);
+    const url = "/admin/addQuestion/" + result.quiz_id;
+    res.send({ Success: "Success!", quiz_id: url });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+router.get("/edit/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (id != null || id != undefined) {
+      const result = await Questiondb.findById(id);
+      if (!result) {
+        res.send({ Success: "Something wrong!" });
+      } else {
+        console.log(result.options);
+        res.render("editQuetion", {
+          id: result._id,
+          quiz_id: result.quiz_id,
+          department: result.department,
+          q: result.q,
+          answer: result.answer,
+          options: result.options,
+        });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/profile", async (req, res, next) => {
-  console.log("profile", req.session.adminId);
   try {
+    if (!req.session.adminId) {
+      return res.redirect("/admin/login");
+    }
     const { id, isAdmin } = req.session.adminId;
 
     if (!isAdmin) {

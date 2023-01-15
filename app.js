@@ -44,11 +44,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(__dirname + "/views"));
+app.use("/public", express.static(__dirname + "/public"));
 
 var index = require("./routes/index");
 var admin = require("./routes/admin");
+var link = require("./routes/link.route");
 app.use("/", index);
 app.use("/admin", admin);
+app.use("/link", link);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -64,7 +67,7 @@ app.use(function (err, req, res, next) {
   res.send(err.message);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
   console.log("Server is started on http://127.0.0.1:" + PORT);
 });

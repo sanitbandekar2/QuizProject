@@ -13,8 +13,8 @@
 			<% if (quizs.length  != 0) { %>
 			  <ul class="list-group list-group-flush">
 				
-				<% quizs.forEach(function(obj) { %>
-
+				  <% quizs.forEach(function(obj) { %>
+					<li class="list-group-item"></li>
 					<table style="width: 100%; text-align: center; ">
 						<tr>
 						  <td style="width: 50%;"><%= obj.quizName %></td> 
@@ -22,7 +22,7 @@
 						  <td style="width: 25%;"><a  style=" text-decoration: none;color: black;" href="/admin/deleteQuizName/<%= obj._id %>"><i class="fa fa-trash"></i></a></a></td>
 						</tr>
 					  </table>
-				 
+					</li>
 			   <% }); %> 
 			  </ul>
 			  <%} else { %> 
