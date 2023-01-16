@@ -38,6 +38,11 @@
 
     <div class="result-box custom-box hide">
       <h1>quiz reults</h1>
+      <form method="post" id="form">
+        <input hidden type="text" id="score" name="score" />
+        <input hidden type="text" id="quizid" name="quiz_id" />
+        <input hidden type="text" id="numberofquestion" name="questionLimit" />
+      </form>
       <table>
         <tr>
           <td>total questions</td>
@@ -61,7 +66,9 @@
         </tr>
         <tr>
           <td>your total score</td>
-          <td><span class="total-score"> </span></td>
+          <td>
+            <span class="total-score"> </span>
+          </td>
         </tr>
       </table>
       <button type="button" class="btn" onclick="tryAgainQuiz()">
@@ -79,7 +86,7 @@
       // for generating x number of questions from the array declare a const varaible and asign that x value and replace quiz.length to the varaible name...(questionLimit)
       $.getJSON("<%= filelocation %>", function (data) {
         quiz = data;
-        console.log(quiz); //json output
+        console.log(quiz[0].quiz_id); //json output
       });
 
       const questionNumber = document.querySelector(".question-number");
@@ -269,6 +276,43 @@
           percentage.toFixed(2) + "%";
         resultBox.querySelector(".total-score").innerHTML =
           corectAnswers + "/" + questionLimit;
+
+        let score = document.getElementById("score");
+        score.value = corectAnswers;
+
+        let quiz_id = document.getElementById("quizid");
+        quiz_id.value = quiz[0].quiz_id;
+
+        let numberofquestion = document.getElementById("numberofquestion");
+        numberofquestion.value = questionLimit;
+
+        event.preventDefault();
+
+        $.ajax({
+          type: "POST",
+          url: "/result",
+          data: $("#form").serialize(),
+          dataType: "json",
+          success: function (response) {
+            //alert("a");
+            console.log(response.Success);
+
+            // document.getElementById("check").innerHTML = response.Success;
+            // //ADD THIS CODE
+            // setTimeout(function () {
+            //   document.getElementById("check").innerHTML = "";
+            // }, 3000);
+            // if (response.Success == "Success!") {
+            //   document
+            //     .getElementById("aa")
+            //     .setAttribute("href", response.quiz_id);
+            //   document.getElementById("aa").click();
+            // }
+          },
+          error: function (e) {
+            console.log(e);
+          },
+        });
         // resultBox.querySelector(".total-score").innerHTML = corectAnswers+ "/" +quiz.length;
       }
 

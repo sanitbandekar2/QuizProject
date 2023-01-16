@@ -3,12 +3,13 @@ var router = express.Router();
 var User = require("../models/user");
 const quizNameModel = require("../models/quizNameModel");
 const QuestionModel = require("../models/qustionsModel");
+const resultModel = require("../models/resultModel");
 const fs = require("fs").promises;
 
 router.get("/", function (req, res, next) {
   console.log(req.session.userId);
   if (req.session.userId) {
-    res.redirect("/profile");
+    res.redirect("/home");
   } else {
     return res.render("login.ejs");
   }
@@ -66,7 +67,7 @@ router.post("/signup", function (req, res, next) {
 
 router.get("/login", function (req, res, next) {
   if (req.session.userId) {
-    res.redirect("/profile");
+    res.redirect("/home");
   } else {
     return res.render("login.ejs");
   }
@@ -89,7 +90,7 @@ router.post("/login", function (req, res, next) {
               url: "/link/quiz/0326dcfc-ba65-4c5c-babc-42000dd597d0",
             });
           } else {
-            res.send({ Success: "Success!", url: "/profile" });
+            res.send({ Success: "Success!", url: "/home" });
           }
         } else {
           res.send({ Success: "Wrong password!" });
@@ -104,8 +105,9 @@ router.post("/login", function (req, res, next) {
   }
 });
 
-router.get("/profile", async (req, res, next) => {
-  console.log("profile");
+router.get("/home", async (req, res, next) => {
+  console.log("home");
+
   User.findOne({ unique_id: req.session.userId }, function (err, data) {
     // console.log("data");
     // console.log(data);
@@ -113,7 +115,21 @@ router.get("/profile", async (req, res, next) => {
       res.redirect("/");
     } else {
       //console.log("found");
-      return res.render("userProfile.ejs", {
+      return res.render("userhome.ejs", {
+        name: data.username,
+        email: data.email,
+      });
+    }
+  });
+});
+router.get("/profile", async (req, res, next) => {
+  // console.log("p");
+
+  User.findOne({ unique_id: req.session.userId }, function (err, data) {
+    if (!data) {
+      res.redirect("/");
+    } else {
+      return res.render("userhome.ejs", {
         name: data.username,
         email: data.email,
       });
@@ -121,6 +137,32 @@ router.get("/profile", async (req, res, next) => {
   });
 });
 
+router.post("/result", async (req, res, next) => {
+  try {
+    const { questionLimit, quiz_id, score } = req.body;
+    console.log("result", req.body);
+    const result = new resultModel({
+      quiz_id: quiz_id,
+      score: score,
+      questionLimit: questionLimit,
+      userId: req.session.userId,
+    });
+
+    const existing = await resultModel.find({ quiz_id: quiz_id });
+
+    if (existing.length === 0) {
+      result.save(function (err, data) {
+        if (err) console.log(err);
+        else console.log("added");
+      });
+    }
+
+    // const result = await resultModel.create()
+  } catch (error) {
+    next(error);
+    console.log(error);
+  }
+});
 router.get("/quiz/:section", async (req, res, next) => {
   try {
     const section = req.params.section;
