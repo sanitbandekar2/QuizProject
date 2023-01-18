@@ -19,16 +19,11 @@ router.get("/", async (req, res, next) => {
     }
     const listQiz = await Link.find({});
     console.log(listQiz);
-    res.render("createLink", { quizs: listQiz });
-  } catch (error) {
-    next(error);
-  }
-});
-router.get("/quiz", async (req, res, next) => {
-  try {
-    const listQiz = await Link.find({});
-    console.log(listQiz);
-    res.render("createLink", { quizs: listQiz });
+    res.render("createLink", {
+      quizs: listQiz,
+      url: "createLink",
+      isUpdate: false,
+    });
   } catch (error) {
     next(error);
   }
@@ -63,6 +58,50 @@ router.post("/createLink", async (req, res, next) => {
     next(error);
   }
 });
+
+router.get("/editLink/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!req.session.adminId) {
+      return res.redirect("/admin/login");
+    }
+    const { isAdmin } = req.session.adminId;
+
+    if (!isAdmin) {
+      res.redirect("/");
+    }
+    const listQiz = await Link.find();
+    console.log(listQiz);
+    const url = "editLink/" + id;
+    res.render("createLink", { quizs: listQiz, url: url, isUpdate: true });
+  } catch (error) {
+    next(error);
+  }
+});
+router.post("/editLink/:id", async (req, res, next) => {
+  try {
+    let id = req.params.id;
+    const result = await linkSchema.validateAsync(req.body);
+    // console.log(result);
+
+    const data = await Link.findOne({ name: result.name });
+    console.log(data);
+    if (!data) {
+      const newQuiz = await Link.findOneAndUpdate({
+        id: id,
+        name: result.name,
+      });
+      console.log("Success", newQuiz);
+      id = "/link/";
+      res.send({ Success: "Success!", quiz_id: id });
+    } else {
+      res.send({ Success: "Already created!" });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/deleteQuizName/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -221,11 +260,11 @@ router.get("/quiz/:id", async (req, res, next) => {
       res.redirect("/");
     } else {
       const quizName = await Link.findOne({ quiz_id: id });
-
+      console.log(quizName);
       const data = await Questiondb.find({ quiz_id: quizName.quiz_id });
       console.log(quizName);
 
-      fs.writeFileSync("./public/link.json", JSON.stringify(data));
+      fs.writeFileSync("public/link.json", JSON.stringify(data));
 
       return res.render("quiz.ejs", {
         title: quizName.name,

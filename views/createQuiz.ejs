@@ -1,79 +1,126 @@
-<%- include('../views/include/header.ejs')%>
-<%- include('../views/include/nav.ejs')%>
+<%- include('../views/include/header.ejs')%> <%-
+include('../views/include/nav.ejs')%>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+  $(document).ready(function () {
+    $("#form").submit(function (event) {
+      event.preventDefault();
 
-        $( "#form" ).submit(function(event) {
-            event.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "/admin/create",
+        data: $("#form").serialize(),
+        dataType: "json",
+        success: function (response) {
+          //alert("a");
+          //console.log(response.Success);
+          $("#form")[0].reset();
 
-            $.ajax({
-                type: 'POST',
-                url: '/admin/create',
-                data: $('#form').serialize(),
-                dataType: "json",
-                success: function(response){
-                    //alert("a");
-                    //console.log(response.Success);
-                    $('#form')[0].reset();
-
-                    document.getElementById("check").innerHTML=response.Success;
-                         //ADD THIS CODE
-                         setTimeout(function(){
-                             document.getElementById("check").innerHTML="";
-                         },3000);
-                         if (response.Success=="Success!") {
-                             document.getElementById("aa").setAttribute("href", response.quiz_id);
-                             document.getElementById("aa").click();
-                         };
-                     },
-                     error: function() {
-                     }
-                 })
-        });
-
+          document.getElementById("check").innerHTML = response.Success;
+          //ADD THIS CODE
+          setTimeout(function () {
+            document.getElementById("check").innerHTML = "";
+          }, 3000);
+          if (response.Success == "Success!") {
+            document
+              .getElementById("aa")
+              .setAttribute("href", response.quiz_id);
+            document.getElementById("aa").click();
+          }
+        },
+        error: function () {},
+      });
     });
+  });
 </script>
 <div class="container-sm">
-    <div class="card" style="width: 50%; padding: 5%; margin: 10rem auto 10rem auto;">
-        <div style="text-align: center; margin: 2rem;">
-			<h1>Create quiz</h1>
-		</div>
-
-        <form method="post"id="form">
-            <div class="mb-3">
-              <label for="quizname" class="form-label">Quiz name</label>
-              <input type="text" class="form-control" name="qname" id="quizname" aria-describedby="quiznameHelp" required>
-              <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="department" id="flexRadioDefault1" value="cs">
-                <label class="form-check-label" for="flexRadioDefault1">
-                  CS
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="department" id="flexRadioDefault2" value="bca" >
-                <label class="form-check-label" for="flexRadioDefault2">
-                  BCA
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="department" id="flexRadioDefault3" value="gen" >
-                <label class="form-check-label" for="flexRadioDefault3">
-                  GEN
-                </label>
-              </div>
-            </div>
-            <div style="display: flex; justify-content: center;">
-                <input type="submit" style="width: 80%; " value="Create" class="btn btn-primary">
-            </div>
-          </form>
-          <div class="mssg bg-danger">
-			<span id="check" ></span>
-		</div>
-		<div id="LangTable"><a  id="aa"></a>
-		</div>
+  <div class="card" style="width: 50%; padding: 5%; margin: 3rem auto">
+    <div style="text-align: center; margin: 2rem">
+      <h1>Create quiz</h1>
     </div>
+
+    <form method="post" id="form">
+      <div class="mb-3">
+        <label for="quizname" class="form-label">Quiz name</label>
+        <input
+          type="text"
+          class="form-control"
+          name="qname"
+          id="quizname"
+          aria-describedby="quiznameHelp"
+          required
+        />
+        <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
+
+        <h6>Quiz section</h6>
+        <% if (array.length != 0) { %> <% array.forEach(function(obj) { %>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="department"
+            id="<%= obj.name %>"
+            value="<%= obj.name %>"
+            required
+          />
+          <label class="form-check-label" for="<%= obj.name %>"
+            ><%= obj.name %></label
+          >
+        </div>
+        <% })%> <%} else { %>
+        <div style="margin: 1rem" class="alert alert-danger" role="alert">
+          Section are not created At!
+        </div>
+
+        <% } %>
+        <!-- levels -->
+        <h6>Quiz levels</h6>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levels"
+            id="easy"
+            value="easy"
+          />
+          <label class="form-check-label" for="easy"> Easy </label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levels"
+            id="medium"
+            value="medium"
+            required
+          />
+          <label class="form-check-label" for="medium"> Medium </label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="levels"
+            id="hard"
+            value="hard"
+          />
+          <label class="form-check-label" for="hard"> Hard </label>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: center">
+        <input
+          type="submit"
+          style="width: 80%"
+          value="Create"
+          class="btn btn-primary"
+        />
+      </div>
+    </form>
+    <div class="mssg bg-danger">
+      <span id="check"></span>
+    </div>
+    <div id="LangTable"><a id="aa"></a></div>
+  </div>
 </div>
 
 <%- include('../views/include/footer.ejs')%>

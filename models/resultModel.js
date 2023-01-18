@@ -6,6 +6,7 @@ resultSchema = new Schema({
   score: String,
   questionLimit: String,
   userId: String,
+  quizname: String,
 });
 const result = mongoose.model("result", resultSchema);
 

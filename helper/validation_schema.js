@@ -8,8 +8,12 @@ const authSchema = Joi.object({
 const quizNameSchema = Joi.object({
   qname: Joi.string().lowercase().required(),
   department: Joi.string().lowercase().required(),
+  levels: Joi.string().lowercase().required(),
 });
 const linkSchema = Joi.object({
+  name: Joi.string().lowercase().required(),
+});
+const sectionSchema = Joi.object({
   name: Joi.string().lowercase().required(),
 });
 const questionSchema = Joi.object({
@@ -20,4 +24,10 @@ const questionSchema = Joi.object({
   options: Joi.array().required(),
 });
 
-module.exports = { authSchema, quizNameSchema, questionSchema, linkSchema };
+module.exports = {
+  authSchema,
+  quizNameSchema,
+  questionSchema,
+  linkSchema,
+  sectionSchema,
+};

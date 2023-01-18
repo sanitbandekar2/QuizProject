@@ -5,6 +5,7 @@ quizNameSchema = new Schema({
   quiz_id: String,
   quizName: String,
   department: String,
+  levels: String,
 });
 const QuizName = mongoose.model("quizName", quizNameSchema);
 

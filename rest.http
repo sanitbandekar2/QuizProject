@@ -11,3 +11,10 @@ Content-Type:  application/json
 GET   http://localhost:3001/admin/test/
 
 ###
+POST  http://localhost:3000/link/editLink/63c80d118c972d96558b72b8
+Content-Type:  application/json
+
+{
+
+    "name" : "dj"
+}

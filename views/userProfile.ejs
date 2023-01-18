@@ -1,32 +1,73 @@
 <%- include('../views/include/header.ejs')%> <%-
 include('../views/include/usernav.ejs')%>
+<style>
+  #customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
 
-<div class="container text-center">
-  <div class="card" style="margin: 3%; padding: 3%">
-    <h1>Welcome <%= name %></h1>
-  </div>
+  #customers td,
+  #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
 
-  <div class="row align-items-start">
-    <div class="col">
-      <div class="card">
-        <a href="/quiz/cs" class="aLink">
-          <h2>CS</h2>
-        </a>
+  #customers tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  #customers tr:hover {
+    background-color: #ddd;
+  }
+
+  #customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04aa6d;
+    color: white;
+  }
+</style>
+<div class="container-sm" style="margin-top: 3rem">
+  <!-- Content here -->
+  <div style="display: flex; flex-direction: row">
+    <div class="card" style="width: 12rem; padding: 2rem; height: 200px">
+      <img
+        width="100px"
+        height="100px"
+        src="/public/avataar/user-solid.svg"
+        class="card-img-top"
+      />
+      <div class="card-body">
+        <h5 class="card-title"><%= name %></h5>
       </div>
     </div>
-    <div class="col">
-      <div class="card">
-        <a href="/quiz/bca" class="aLink">
-          <h2>BCA</h2>
-        </a>
-      </div>
+
+    <% if (array.length != 0) { %>
+
+    <div class="card" style="width: 80%; margin-left: 3rem">
+      <table id="customers">
+        <tr>
+          <th>Quiz</th>
+          <th>Total questions</th>
+          <th>Total score</th>
+        </tr>
+        <% array.forEach(function(obj,key) { %>
+        <tr>
+          <td><%= obj.quizname %></td>
+          <td><%= obj.questionLimit %></td>
+          <td><%= obj.score %></td>
+        </tr>
+        <% }) %>
+      </table>
     </div>
-    <div class="col">
-      <div class="card">
-        <a href="/quiz/gen" class="aLink">
-          <h2>GEN</h2>
-        </a>
+    <% }else { %>
+    <div class="card" style="width: 80%; margin-left: 3rem">
+      <div style="margin: 1rem" class="alert alert-danger" role="alert">
+        No result found
       </div>
+      <% } %>
     </div>
   </div>
 </div>

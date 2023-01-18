@@ -9,7 +9,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/link/createLink',
+                url: '/link/<%=url%>',
                 data: $('#form').serialize(),
                 dataType: "json",
                 success: function(response){
@@ -87,7 +87,7 @@
               
             </div>
             <div style="display: flex; justify-content: center;">
-                <input type="submit" style="width: 80%; " value="Create" class="btn btn-primary">
+                <input type="submit" style="width: 80%; " value="<% if (isUpdate) { %>Update<% } else {%> create<%  } %>" class="btn btn-primary">
             </div>
           </form>
 
@@ -99,10 +99,13 @@
 		</div>
     </div>
 
+    <% if (!isUpdate) { %>
     <div class="card" >
 			<div class="card-header">
 				Qiuz's 
 			</div>
+       
+ 
 			<% if (quizs.length  != 0) { %>
 			  <ul class="list-group list-group-flush">
           <% quizs.forEach(function(obj) { %>
@@ -111,9 +114,10 @@
 					<table style="width: 100%; text-align: center; ">
 						<tr>
 						  <td style="width: 50%;"><%= obj.name %></td> 
-						  <td style="width: 25%;"><a  style=" text-decoration: none;color: black;" href="/link/addQuestion/<%= obj.quiz_id %>"><i class="fa fa-edit"></i></a></a></td>
-						  <td style="width: 25%;"><a  style=" text-decoration: none;color: black;" href="/link/deleteQuizName/<%= obj._id %>"><i class="fa fa-trash"></i></a></a></td>
-						  <td style="width: 25%;"><input type="text" hidden id="myInput"><button onclick="myFunction()" onmouseout="outFunc()"  style=" text-decoration: none;color: black;" href="/link/quiz/<%= obj.quiz_id %>"><span class="tooltiptext" id="myTooltip"></span><i class="fa fa-share"></i></button></a></td>
+						  <td style="width: 10%;"><a  style=" text-decoration: none;color: black;" href="/link/addQuestion/<%= obj.quiz_id %>"><i class="fa fa-plus"></i></a></td>
+						  <td style="width: 10%;"><a  style=" text-decoration: none;color: black;" href="/link/editLink/<%= obj._id %>"><i class="fa fa-edit"></i></a></a></td>
+						  <td style="width: 10%;"><a  style=" text-decoration: none;color: black;" href="/link/deleteQuizName/<%= obj._id %>"><i class="fa fa-trash"></i></a></a></td>
+						  <td style="width: 20%;"><input type="text" hidden value="<%= obj.quiz_id%>"  id="<%= obj.quiz_id%>"><button onclick="myFunction('<%= obj.quiz_id%>','<%= obj._id%>')" onmouseout="outFunc()"  style=" text-decoration: none;color: black;" ><span class="tooltiptext" id="<%= obj._id%>"></span><i class="fa fa-share"></i></button></a></td>
 						</tr>
 					  </table>
 				 </li>
@@ -121,27 +125,29 @@
 			  </ul>
 			  <%} else { %> 
 				<div style="margin: 1rem;" class="alert alert-danger" role="alert">
-					Quiz are not created At! <a href="/link/create">click here</a>
+					Quiz Links are not created At! 
 				  </div>
 
 				<% } %> 
 			</div>
+      <% } %>
 		
 </div>
 <script>
-  function myFunction() {
-    var copyText = document.getElementById("myInput");
-    copyText.value = window.location.href
+  function myFunction(input,tip) {
+    var copyText = document.getElementById(input);
+    let id = window.location.origin +"/link/quiz/"+ copyText.value;
+    copyText.value =id
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     navigator.clipboard.writeText(copyText.value);
     
-    var tooltip = document.getElementById("myTooltip");
+    var tooltip = document.getElementById(tip);
     tooltip.innerHTML = "Copied: " + copyText.value;
   }
   
   function outFunc() {
-    var tooltip = document.getElementById("myTooltip");
+    var tooltip = document.getElementById(tip);
     tooltip.innerHTML = "Copy to clipboard";
   }
   </script>

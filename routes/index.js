@@ -4,6 +4,8 @@ var User = require("../models/user");
 const quizNameModel = require("../models/quizNameModel");
 const QuestionModel = require("../models/qustionsModel");
 const resultModel = require("../models/resultModel");
+const QuizName = require("../models/quizNameModel");
+const section = require("../models/sectionModel");
 const fs = require("fs").promises;
 
 router.get("/", function (req, res, next) {
@@ -108,54 +110,68 @@ router.post("/login", function (req, res, next) {
 router.get("/home", async (req, res, next) => {
   console.log("home");
 
-  User.findOne({ unique_id: req.session.userId }, function (err, data) {
-    // console.log("data");
-    // console.log(data);
-    if (!data) {
-      res.redirect("/");
-    } else {
-      //console.log("found");
-      return res.render("userhome.ejs", {
-        name: data.username,
-        email: data.email,
-      });
-    }
-  });
+  const data = await User.findOne({ unique_id: req.session.userId });
+  // console.log("data");
+  // console.log(data);
+  const sectionList = await section.find();
+  if (!data) {
+    res.redirect("/");
+  } else {
+    //console.log("found");
+    return res.render("userhome.ejs", {
+      name: data.username,
+      email: data.email,
+      array: sectionList,
+    });
+  }
 });
 router.get("/profile", async (req, res, next) => {
-  // console.log("p");
+  try {
+    console.log(req.session.userId);
+    let quiz = [];
 
-  User.findOne({ unique_id: req.session.userId }, function (err, data) {
-    if (!data) {
-      res.redirect("/");
-    } else {
-      return res.render("userhome.ejs", {
-        name: data.username,
-        email: data.email,
-      });
-    }
-  });
+    const result = await resultModel.find({ userId: req.session.userId });
+    console.log(result);
+
+    console.log(quiz);
+    User.findOne({ unique_id: req.session.userId }, function (err, data) {
+      if (!data) {
+        res.redirect("/");
+      } else {
+        return res.render("userprofile.ejs", {
+          name: data.username,
+          email: data.email,
+          array: result,
+          quiz: quiz,
+        });
+      }
+    });
+  } catch (error) {
+    next(error);
+    console.log(error);
+  }
 });
 
 router.post("/result", async (req, res, next) => {
   try {
-    const { questionLimit, quiz_id, score } = req.body;
-    console.log("result", req.body);
+    const { questionLimit, quiz_id, score, quizname } = req.body;
+
     const result = new resultModel({
       quiz_id: quiz_id,
       score: score,
       questionLimit: questionLimit,
       userId: req.session.userId,
+      quizname: quizname,
     });
 
-    const existing = await resultModel.find({ quiz_id: quiz_id });
+    // const existing = await resultModel.find({ quiz_id: quiz_id });
 
-    if (existing.length === 0) {
-      result.save(function (err, data) {
-        if (err) console.log(err);
-        else console.log("added");
-      });
-    }
+    // if (existing.length === 0) {
+    result.save(function (err, data) {
+      if (err) console.log(err);
+      else console.log("added");
+    });
+    // }
 
     // const result = await resultModel.create()
   } catch (error) {
@@ -163,22 +179,28 @@ router.post("/result", async (req, res, next) => {
     console.log(error);
   }
 });
-router.get("/quiz/:section", async (req, res, next) => {
+router.get("/quiz/:section/:levels", async (req, res, next) => {
   try {
-    const section = req.params.section;
+    const { section, levels } = req.params;
+    console.log(levels);
+
     const user = await User.findOne({ unique_id: req.session.userId });
     // console.log("data");
     // console.log(user);
     if (!user) {
       res.redirect("/");
     } else {
-      const quizName = await quizNameModel.findOne({ department: section });
+      const quizName = await quizNameModel.findOne({
+        department: section,
+        levels: levels,
+      });
       console.log(quizName);
 
       const data = await QuestionModel.find({ quiz_id: quizName.quiz_id });
 
-      // fs.writeFileSync("../public/file.json", JSON.stringify(data));
-      fs.writeFile("file.json", JSON.stringify(data))
+      console.log(data);
+
+      fs.writeFile("public/file.json", JSON.stringify(data))
         .then(() => {
           console.log("JSON saved");
           return res.render("quiz.ejs", {

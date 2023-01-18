@@ -8,7 +8,9 @@ const {
   authSchema,
   quizNameSchema,
   questionSchema,
+  sectionSchema,
 } = require("../helper/validation_schema");
+const section = require("../models/sectionModel");
 
 router.get("/", function (req, res, next) {
   if (req.session.adminId) {
@@ -100,34 +102,167 @@ router.post("/login", async (req, res, next) => {
     next(error);
   }
 });
+router.post("/createSection", async (req, res, next) => {
+  try {
+    const result = await sectionSchema.validateAsync(req.body);
+    let id = uuid.v4();
+    console.log(result);
+    section.findOne({ name: result.name }, function (err, data) {
+      console.log(data);
+      if (!data) {
+        const newSection = new section({
+          name: result.name,
+          section_id: id.trim(),
+        });
+        newSection.save(function (err, quiz) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("Success", id);
+            id = "/admin/create/";
+            res.send({ Success: "Success!", quiz_id: id });
+          }
+        });
+      } else {
+        res.send({ Success: "Already created!" });
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+router.get("/sectionDelete/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (id != null || id != undefined) {
+      const result = await section.findByIdAndDelete(id);
+      if (!result) {
+        res.send({ Success: "Something wrong!" });
+      } else {
+        const url = "/admin/createSection";
+        res.redirect(url);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+router.get("/createSection", async (req, res, next) => {
+  try {
+    if (!req.session.adminId) {
+      return res.redirect("/admin/login");
+    }
+    const { id, isAdmin } = req.session.adminId;
 
-router.get("/create", function (req, res, next) {
-  return res.render("createQuiz.ejs");
+    if (!isAdmin) {
+      res.redirect("/");
+    }
+    const listSection = await section.find();
+    console.log(listSection);
+    res.render("createQuizsection", {
+      array: listSection,
+      url: "createSection",
+      isUpdate: false,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/editsection/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!req.session.adminId) {
+      return res.redirect("/admin/login");
+    }
+    const { isAdmin } = req.session.adminId;
+
+    if (!isAdmin) {
+      res.redirect("/");
+    }
+    const listSection = await section.find();
+    console.log(listSection);
+    const url = "editSection/" + id;
+    res.render("createQuizsection", {
+      array: listSection,
+      url: url,
+      isUpdate: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+router.post("/editSection/:id", async (req, res, next) => {
+  try {
+    let id = req.params.id;
+    const result = await sectionSchema.validateAsync(req.body);
+    // console.log(result);
+
+    const data = await section.findOne({ name: result.name });
+    console.log(data);
+    if (!data) {
+      const newsection = await section.findOneAndUpdate({
+        id: id,
+        name: result.name,
+      });
+      console.log("Success", newsection);
+      id = "/admin/createSection";
+      res.send({ Success: "Success!", quiz_id: id });
+    } else {
+      res.send({ Success: "Already created!" });
+    }
+  } catch (error) {
+    next(error);
+    console.log(error);
+  }
+});
+router.get("/create", async (req, res, next) => {
+  try {
+    if (!req.session.adminId) {
+      return res.redirect("/admin/login");
+    }
+    const { id, isAdmin } = req.session.adminId;
+
+    if (!isAdmin) {
+      res.redirect("/");
+    }
+    const listSection = await section.find();
+    console.log(listSection);
+
+    return res.render("createQuiz.ejs", { array: listSection });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/create", async function (req, res, next) {
   try {
     const result = await quizNameSchema.validateAsync(req.body);
     let id = uuid.v4();
+    console.log(result);
 
-    QuizName.findOne({ quizName: result.qname }, function (err, data) {
-      if (!data) {
-        console.log(data);
-        const newQuiz = new QuizName({
-          quiz_id: id.trim(),
-          quizName: result.qname,
-          department: result.department,
-        });
-        newQuiz.save(function (err, quiz) {
-          if (err) console.log(err);
-          else console.log("Success");
-        });
-        id = "/admin/addQuestion/" + id;
-        res.send({ Success: "Success!", quiz_id: id });
-      } else {
-        res.send({ Success: "Already created!" });
+    QuizName.findOne(
+      { $or: [{ quizName: result.qname }, { levels: result.levels }] },
+      function (err, data) {
+        if (!data) {
+          console.log(data);
+          const newQuiz = new QuizName({
+            quiz_id: id.trim(),
+            quizName: result.qname,
+            department: result.department,
+            levels: result.levels,
+          });
+          newQuiz.save(function (err, quiz) {
+            if (err) console.log(err);
+            else console.log("Success");
+          });
+          id = "/admin/addQuestion/" + id;
+          res.send({ Success: "Success!", quiz_id: id });
+        } else {
+          res.send({ Success: "Already created!" });
+        }
       }
-    });
+    );
   } catch (error) {
     next(error);
   }
@@ -255,7 +390,7 @@ router.get("/edit/:id", async (req, res, next) => {
       if (!result) {
         res.send({ Success: "Something wrong!" });
       } else {
-        console.log(result.options);
+        console.log(result);
         res.render("editQuetion", {
           id: result._id,
           quiz_id: result.quiz_id,
@@ -263,6 +398,7 @@ router.get("/edit/:id", async (req, res, next) => {
           q: result.q,
           answer: result.answer,
           options: result.options,
+          url: "/admin/",
         });
       }
     }
