@@ -7,6 +7,8 @@ userSchema = new Schema({
   username: String,
   password: String,
   passwordConf: String,
+  mobile: Number,
+  otp: Number,
 });
 const User = mongoose.model("User", userSchema);
 

@@ -16,7 +16,7 @@ router.get("/", function (req, res, next) {
   if (req.session.adminId) {
     res.redirect("/admin/profile");
   } else {
-    return res.render("adminsignup.ejs");
+    return res.render("adminLogin.ejs");
   }
 });
 
@@ -90,7 +90,7 @@ router.post("/login", async (req, res, next) => {
           //console.log("Done Login");
           req.session.adminId = { id: data.unique_id, isAdmin: data.isAdmin };
           //console.log(req.session.userId);
-          res.send({ Success: "Success!" });
+          res.send({ Success: "Success!", url: "/admin/profile" });
         } else {
           res.send({ Success: "Wrong password!" });
         }
@@ -227,9 +227,13 @@ router.get("/create", async (req, res, next) => {
       res.redirect("/");
     }
     const listSection = await section.find();
-    console.log(listSection);
+    const listQiz = await QuizName.find();
+    console.log(listQiz);
 
-    return res.render("createQuiz.ejs", { array: listSection });
+    return res.render("createQuiz.ejs", {
+      array: listSection,
+      listquiz: listQiz,
+    });
   } catch (error) {
     next(error);
   }
@@ -242,7 +246,7 @@ router.post("/create", async function (req, res, next) {
     console.log(result);
 
     QuizName.findOne(
-      { $or: [{ quizName: result.qname }, { levels: result.levels }] },
+      { $and: [{ quizName: result.qname }, { levels: result.levels }] },
       function (err, data) {
         if (!data) {
           console.log(data);

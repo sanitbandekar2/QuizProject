@@ -7,25 +7,33 @@ const resultModel = require("../models/resultModel");
 const QuizName = require("../models/quizNameModel");
 const section = require("../models/sectionModel");
 const fs = require("fs").promises;
+var unirest = require("unirest");
 
-router.get("/", function (req, res, next) {
-  console.log(req.session.userId);
+router.get("/", async (req, res, next) => {
   if (req.session.userId) {
     res.redirect("/home");
   } else {
-    return res.render("login.ejs");
+    const sectionList = await section.find();
+    console.log(sectionList);
+    //consolse.log("found");
+    return res.render("index.ejs", {
+      array: sectionList,
+    });
   }
+});
+router.get("/feedback", function (req, res, next) {
+  res.render("feedback.ejs");
 });
 
 router.post("/signup", function (req, res, next) {
   console.log(req.body);
   var personInfo = req.body;
-
   if (
     !personInfo.email ||
     !personInfo.username ||
     !personInfo.password ||
-    !personInfo.passwordConf
+    !personInfo.passwordConf ||
+    !personInfo.mobile
   ) {
     res.send();
   } else {
@@ -47,6 +55,8 @@ router.post("/signup", function (req, res, next) {
               username: personInfo.username,
               password: personInfo.password,
               passwordConf: personInfo.passwordConf,
+              mobile: personInfo.mobile,
+              otp: "123",
             });
 
             newPerson.save(function (err, Person) {
@@ -76,7 +86,7 @@ router.get("/login", function (req, res, next) {
 });
 
 router.post("/login", function (req, res, next) {
-  // console.log(req.body);
+  console.log(req.body);
   try {
     User.findOne({ email: req.body.email }, function (err, data) {
       if (data) {
@@ -92,7 +102,12 @@ router.post("/login", function (req, res, next) {
               url: "/link/quiz/0326dcfc-ba65-4c5c-babc-42000dd597d0",
             });
           } else {
-            res.send({ Success: "Success!", url: "/home" });
+            if (req.session.home) {
+              let page = req.session.home;
+              res.send({ Success: "Success!", url: page });
+            } else {
+              res.send({ Success: "Success!", url: "/home" });
+            }
           }
         } else {
           res.send({ Success: "Wrong password!" });
@@ -115,12 +130,11 @@ router.get("/home", async (req, res, next) => {
   // console.log(data);
   const sectionList = await section.find();
   if (!data) {
-    res.redirect("/");
+    res.redirect("/login");
   } else {
     //console.log("found");
-    return res.render("userhome.ejs", {
-      name: data.username,
-      email: data.email,
+    return res.render("index.ejs", {
+      isLogin: true,
       array: sectionList,
     });
   }
@@ -136,7 +150,7 @@ router.get("/profile", async (req, res, next) => {
     console.log(quiz);
     User.findOne({ unique_id: req.session.userId }, function (err, data) {
       if (!data) {
-        res.redirect("/");
+        res.redirect("/login");
       } else {
         return res.render("userprofile.ejs", {
           name: data.username,
@@ -154,24 +168,26 @@ router.get("/profile", async (req, res, next) => {
 
 router.post("/result", async (req, res, next) => {
   try {
-    const { questionLimit, quiz_id, score, quizname } = req.body;
+    console.log(req.body);
+    const { questionLimit, quiz_id, score, section, percentage } = req.body;
 
     const result = new resultModel({
       quiz_id: quiz_id,
       score: score,
       questionLimit: questionLimit,
       userId: req.session.userId,
-      quizname: quizname,
+      section: section,
+      percentage: percentage,
     });
 
-    // const existing = await resultModel.find({ quiz_id: quiz_id });
+    const existing = await resultModel.find({ quiz_id: quiz_id });
 
-    // if (existing.length === 0) {
-    result.save(function (err, data) {
-      if (err) console.log(err);
-      else console.log("added");
-    });
-    // }
+    if (existing.length === 0) {
+      result.save(function (err, data) {
+        if (err) console.log(err);
+        else console.log("added");
+      });
+    }
 
     // const result = await resultModel.create()
   } catch (error) {
@@ -182,29 +198,42 @@ router.post("/result", async (req, res, next) => {
 router.get("/quiz/:section/:levels", async (req, res, next) => {
   try {
     const { section, levels } = req.params;
+
+    req.session.home = "/quiz/" + section + "/" + levels;
+
     console.log(levels);
 
     const user = await User.findOne({ unique_id: req.session.userId });
     // console.log("data");
     // console.log(user);
     if (!user) {
-      res.redirect("/");
+      res.redirect("/login");
     } else {
       const quizName = await quizNameModel.findOne({
         department: section,
         levels: levels,
       });
-      console.log(quizName);
+      // console.log(quizName);
 
       const data = await QuestionModel.find({ quiz_id: quizName.quiz_id });
 
-      console.log(data);
-
+      console.log(section);
+      let questionLimits = 5;
+      if (
+        section == "🌟 bca" ||
+        section == "bca" ||
+        section == "cs" ||
+        section == "gk"
+      ) {
+        questionLimits = 20;
+      }
       fs.writeFile("public/file.json", JSON.stringify(data))
         .then(() => {
           console.log("JSON saved");
           return res.render("quiz.ejs", {
             title: quizName.quizName,
+            questionLimit: questionLimits,
+            section: section,
             filelocation: "/public/file.json",
           });
         })
@@ -227,7 +256,7 @@ router.get("/logout", function (req, res, next) {
       if (err) {
         return next(err);
       } else {
-        return res.redirect("/");
+        return res.redirect("/login");
       }
     });
   }
@@ -238,22 +267,49 @@ router.get("/forgetpass", function (req, res, next) {
 });
 
 router.post("/forgetpass", function (req, res, next) {
-  //console.log('req.body');
+  console.log(req.body);
+  let status = "";
   //console.log(req.body);
-  User.findOne({ email: req.body.email }, function (err, data) {
-    console.log(data);
+  User.findOne({ mobile: req.body.mobile }, function (err, data) {
+    // console.log(data.otp, parseInt(req.body.otp));
     if (!data) {
       res.send({ Success: "This Email Is not regestered!" });
     } else {
       // res.send({"Success":"Success!"});
       if (req.body.password == req.body.passwordConf) {
-        data.password = req.body.password;
-        data.passwordConf = req.body.passwordConf;
-
+        if (!req.body.otp) {
+          const otp = Math.floor(Math.random() * 8999 + 1000);
+          data.otp = otp;
+          var fast2sms = unirest("POST", "https://www.fast2sms.com/dev/bulkV2");
+          fast2sms.headers({
+            authorization:
+              "cgRG4aICz9OoOqxBTcm3kBax8wFmU2wpMqoGJsGwIkGYaRAYlEnQ60CFFJyb",
+          });
+          fast2sms.form({
+            variables_values: otp,
+            route: "otp",
+            numbers: req.body.mobile,
+          });
+          fast2sms.end(function (resp) {
+            try {
+              const msg = resp.body;
+              console.log("msg", msg);
+              // res.status(201).json({ message: "result", data: msg[0] });
+            } catch (error) {
+              console.log(error);
+            }
+          });
+        }
+        if (data.otp === parseInt(req.body.otp)) {
+          console.log("verfied");
+          status = "Password changed!";
+          data.password = req.body.password;
+          data.passwordConf = req.body.passwordConf;
+        }
         data.save(function (err, Person) {
           if (err) console.log(err);
-          else console.log("Success");
-          res.send({ Success: "Password changed!" });
+          else console.log("Success", Person);
+          res.send({ Success: status });
         });
       } else {
         res.send({

@@ -42,12 +42,13 @@
         <input hidden type="text" id="score" name="score" />
         <input hidden type="text" id="quizid" name="quiz_id" />
         <input hidden type="text" id="numberofquestion" name="questionLimit" />
+        <input hidden type="text" id="percentage" name="percentage" />
         <input
           hidden
           type="text"
           id="quizname"
-          name="quizname"
-          value="<%= title %> "
+          name="section"
+          value="<%= section %> "
         />
       </form>
       <table>
@@ -83,7 +84,7 @@
       </button>
       <!-- <button type="button" class="btn" onclick="goToHome()">go to home</button> -->
       <button type="button" class="btn">
-        <a class="btn-home" href="/"> go to home </a>
+        <a class="btn-home" href="/home"> go to home </a>
       </button>
     </div>
 
@@ -95,7 +96,9 @@
         quiz = data;
         console.log(quiz[0].quiz_id); //json output
       });
+      const limit = "<%-questionLimit%>";
 
+      console.log(parseInt(limit));
       const questionNumber = document.querySelector(".question-number");
       const questionText = document.querySelector(".question-text");
       const optionContainer = document.querySelector(".option-container");
@@ -104,7 +107,7 @@
       const homeBox = document.querySelector(".home-box");
       const quizBox = document.querySelector(".quiz-box");
       const resultBox = document.querySelector(".result-box");
-      const questionLimit = 5; //if u want all question (const questionLimit = quiz.length;)
+      const questionLimit = parseInt(limit); //if u want all question (const questionLimit = quiz.length;)
       let questionCounter = 0;
       let currentQuestion;
       let availableQuestions = [];
@@ -292,6 +295,9 @@
 
         let numberofquestion = document.getElementById("numberofquestion");
         numberofquestion.value = questionLimit;
+
+        let percentages = document.getElementById("percentage");
+        percentages.value = percentage.toFixed(2);
 
         event.preventDefault();
 

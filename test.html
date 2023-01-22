@@ -11,7 +11,7 @@
       integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/views/css/profile.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -19,28 +19,51 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   </head>
   <body>
-    <div class="container-sm" style="margin-top: 3rem">
+    <div>
       <!-- Content here -->
-      <div class="row">
-        <div class="card" style="width: 12rem; padding: 2rem">
-          <img
-            width="100px"
-            height="100px"
-            src="/public/avataar/user-solid.svg"
-            class="card-img-top"
-          />
-          <div class="card-body">
-            <h5 class="card-title">Name</h5>
-          </div>
+      <div class="header-holder main-container">
+        <div class="header">
+          <h3>Morning Sanit</h3>
+          <span>Have a nice day!</span>
         </div>
+      </div>
+      <!-- header end -->
+      <div class="main-holder main-container">
+        <h4 style="color: white; margin-bottom: 30px">Results</h4>
 
-        <div class="card" style="width: 50%; margin-left: 3rem">
-          <div class="card-header">Result</div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">An item</li>
-            <li class="list-group-item">A second item</li>
-            <li class="list-group-item">A third item</li>
-          </ul>
+        <table id="profile">
+          <tr>
+            <td id="section-tbl">section</td>
+            <td id="section-tbl">questions attempted</td>
+            <td id="section-tbl">score</td>
+            <td id="section-tbl">percentage</td>
+          </tr>
+        </table>
+        <div class="pCard">
+          <table id="profile">
+            <tr>
+              <td id="section-tbl">name abcdefssss</td>
+              <td id="section-tbl">1</td>
+              <td id="section-tbl">1</td>
+              <td id="section-tbl">
+                <div
+                  class="progress"
+                  role="progressbar"
+                  aria-label="Basic example"
+                  aria-valuenow="25"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  <div
+                    class="progress-bar progress-bar-striped progress-bar-animated"
+                    style="width: 25%"
+                  >
+                    25%
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
