@@ -132,7 +132,7 @@ router.get("/addQuestion/:id", async (req, res, next) => {
           if (!data) {
             res.redirect("/");
           } else {
-            console.log("found");
+            console.log(result);
             return res.render("addQuestion.ejs", {
               id: data.quiz_id,
               qname: data.name,
@@ -257,17 +257,20 @@ router.get("/quiz/:id", async (req, res, next) => {
     // console.log("data");
     // console.log(user);
     if (!user) {
-      res.redirect("/");
+      res.redirect("/login");
     } else {
       const quizName = await Link.findOne({ quiz_id: id });
       console.log(quizName);
       const data = await Questiondb.find({ quiz_id: quizName.quiz_id });
-      console.log(quizName);
+      console.log(data);
 
       fs.writeFileSync("public/link.json", JSON.stringify(data));
 
       return res.render("quiz.ejs", {
         title: quizName.name,
+        questionLimit: 10,
+        section: "link",
+        level: "link",
         filelocation: "/public/link.json",
       });
 

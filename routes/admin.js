@@ -11,6 +11,8 @@ const {
   sectionSchema,
 } = require("../helper/validation_schema");
 const section = require("../models/sectionModel");
+const result = require("../models/resultModel");
+const feedBack = require("../models/feedbackModule");
 
 router.get("/", function (req, res, next) {
   if (req.session.adminId) {
@@ -158,7 +160,7 @@ router.get("/createSection", async (req, res, next) => {
       res.redirect("/");
     }
     const listSection = await section.find();
-    console.log(listSection);
+    // console.log(listSection);
     res.render("createQuizsection", {
       array: listSection,
       url: "createSection",
@@ -181,7 +183,7 @@ router.get("/editsection/:id", async (req, res, next) => {
       res.redirect("/");
     }
     const listSection = await section.find();
-    console.log(listSection);
+    // console.log(listSection);
     const url = "editSection/" + id;
     res.render("createQuizsection", {
       array: listSection,
@@ -196,14 +198,14 @@ router.post("/editSection/:id", async (req, res, next) => {
   try {
     let id = req.params.id;
     const result = await sectionSchema.validateAsync(req.body);
-    // console.log(result);
+    console.log(result.name);
 
     const data = await section.findOne({ name: result.name });
-    console.log(data);
+    console.log(id);
     if (!data) {
-      const newsection = await section.findOneAndUpdate({
-        id: id,
-        name: result.name,
+      const newsection = await section.findByIdAndUpdate({
+        _id: id.trim(),
+        name: result,
       });
       console.log("Success", newsection);
       id = "/admin/createSection";
@@ -426,7 +428,7 @@ router.get("/profile", async (req, res, next) => {
     // console.log("data");
     // console.log(data);
 
-    const listQiz = await QuizName.find();
+    const listQiz = await feedBack.find();
 
     if (!data) {
       res.redirect("/");
@@ -438,6 +440,70 @@ router.get("/profile", async (req, res, next) => {
         quizs: listQiz,
       });
     }
+  } catch (error) {
+    next(error);
+  }
+});
+router.get("/results", async (req, res, next) => {
+  try {
+    if (!req.session.adminId) {
+      return res.redirect("/admin/login");
+    }
+    const { id, isAdmin } = req.session.adminId;
+
+    if (!isAdmin) {
+      res.redirect("/");
+    }
+
+    // const data = await admin.findOne({ unique_id: id });
+    // console.log("data");
+    // console.log(data);
+
+    const results = await result.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "unique_id",
+          as: "user",
+        },
+      },
+    ]);
+
+    return res.render("results.ejs", { array: results });
+    // res.send({ results });
+  } catch (error) {
+    next(error);
+  }
+});
+router.get("/linkResult", async (req, res, next) => {
+  try {
+    if (!req.session.adminId) {
+      return res.redirect("/admin/login");
+    }
+    const { id, isAdmin } = req.session.adminId;
+
+    if (!isAdmin) {
+      res.redirect("/");
+    }
+
+    // const data = await admin.findOne({ unique_id: id });
+    // console.log("data");
+    // console.log(data);
+
+    const results = await result.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "unique_id",
+          as: "user",
+        },
+      },
+    ]);
+
+    return res.render("linkResult.ejs", { array: results });
+    // res.send({ results });
   } catch (error) {
     next(error);
   }

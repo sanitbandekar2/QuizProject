@@ -23,6 +23,11 @@ const questionSchema = Joi.object({
   answer: Joi.number().required(),
   options: Joi.array().required(),
 });
+const feedBackSchema = Joi.object({
+  name: Joi.string().lowercase().required(),
+  email: Joi.string().lowercase().required(),
+  comment: Joi.string().lowercase().required(),
+});
 
 module.exports = {
   authSchema,
@@ -30,4 +35,5 @@ module.exports = {
   questionSchema,
   linkSchema,
   sectionSchema,
+  feedBackSchema,
 };

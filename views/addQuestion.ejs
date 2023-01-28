@@ -44,9 +44,7 @@
               <%= qname %>
             </h1>
           </div>
-          <div style="margin-left: 1rem;">
-            <a class="aLink" href=""><i class="fa fa-edit"></i></a>
-          </div>
+        
         </div>
 
         <form method="post" id="form">
@@ -149,12 +147,13 @@
           </div>
           <ul class="list-group list-group-flush">
 
-            <% questions.forEach(function(obj) { %>
+            <%  key=1; questions.forEach(function(obj) { %>
               <li class="list-group-item">
 
                 <table style="width: 100%; text-align: center; ">
                   <tr>
-                    <td class="d-inline-block text-truncate" style="width: 50%;">
+                    <td style="width: 10%;"><%= key++  %> </td>
+                    <td class="d-inline-block text-truncate" style="width: 40%;">
                       <%= obj.q %>
                     </td>
                     <td style="width: 25%;"><a style=" text-decoration: none;color: black;"

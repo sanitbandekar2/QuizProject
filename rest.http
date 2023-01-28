@@ -8,7 +8,7 @@ Content-Type:  application/json
     "answer" : 0
 }
 ###
-GET   http://localhost:3001/admin/test/
+GET   http://localhost:3000/admin/results/
 
 ###
 POST  http://localhost:3000/link/editLink/63c80d118c972d96558b72b8

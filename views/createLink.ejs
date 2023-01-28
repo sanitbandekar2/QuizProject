@@ -73,7 +73,7 @@
     opacity: 1;
   }
   </style>
-<div class="container-sm">
+<div class="container-sm" style="height: 100vh;">
     <div class="card" style="width: 50%; padding: 5%; margin: 3rem auto 3rem auto;">
         <div style="text-align: center; margin: 2rem;">
 			<h1>Link quiz</h1>
@@ -87,7 +87,7 @@
               
             </div>
             <div style="display: flex; justify-content: center;">
-                <input type="submit" style="width: 80%; " value="<% if (isUpdate) { %>Update<% } else {%> create<%  } %>" class="btn btn-primary">
+                <button type="submit" style="width: 80%; " class="btn btn-primary"><% if (isUpdate) { %>Update<% } else {%> create<%  } %></button>
             </div>
           </form>
 
@@ -108,16 +108,17 @@
  
 			<% if (quizs.length  != 0) { %>
 			  <ul class="list-group list-group-flush">
-          <% quizs.forEach(function(obj) { %>
+          <% key=1; quizs.forEach(function(obj) { %>
             <li class="list-group-item">
 
 					<table style="width: 100%; text-align: center; ">
 						<tr>
+              <td><%= key++; %> </td>
 						  <td style="width: 50%;"><%= obj.name %></td> 
 						  <td style="width: 10%;"><a  style=" text-decoration: none;color: black;" href="/link/addQuestion/<%= obj.quiz_id %>"><i class="fa fa-plus"></i></a></td>
 						  <td style="width: 10%;"><a  style=" text-decoration: none;color: black;" href="/link/editLink/<%= obj._id %>"><i class="fa fa-edit"></i></a></a></td>
 						  <td style="width: 10%;"><a  style=" text-decoration: none;color: black;" href="/link/deleteQuizName/<%= obj._id %>"><i class="fa fa-trash"></i></a></a></td>
-						  <td style="width: 20%;"><input type="text" hidden value="<%= obj.quiz_id%>"  id="<%= obj.quiz_id%>"><button onclick="myFunction('<%= obj.quiz_id%>','<%= obj._id%>')" onmouseout="outFunc()"  style=" text-decoration: none;color: black;" ><span class="tooltiptext" id="<%= obj._id%>"></span><i class="fa fa-share"></i></button></a></td>
+						  <td style="width: 20%;"><input type="text" hidden value="<%= obj.quiz_id%>"  id="<%= obj.quiz_id%>"><div onclick="myFunction('<%= obj.quiz_id%>','<%= obj._id%>')" onmouseout="outFunc()"  style=" text-decoration: none;" ><span class="tooltiptext" id="<%= obj._id%>"></span>copy</div></a></td>
 						</tr>
 					  </table>
 				 </li>
@@ -131,7 +132,7 @@
 				<% } %> 
 			</div>
       <% } %>
-		
+</div>
 </div>
 <script>
   function myFunction(input,tip) {
@@ -143,12 +144,12 @@
     navigator.clipboard.writeText(copyText.value);
     
     var tooltip = document.getElementById(tip);
-    tooltip.innerHTML = "Copied: " + copyText.value;
+    tooltip.innerHTML = "Copied";
   }
   
-  function outFunc() {
-    var tooltip = document.getElementById(tip);
-    tooltip.innerHTML = "Copy to clipboard";
-  }
+  // function outFunc() {
+  //   var tooltip = document.getElementById(tip);
+  //   tooltip.innerHTML = "Copy to clipboard";
+  // }
   </script>
 <%- include('../views/include/footer.ejs')%>

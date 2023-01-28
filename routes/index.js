@@ -8,6 +8,8 @@ const QuizName = require("../models/quizNameModel");
 const section = require("../models/sectionModel");
 const fs = require("fs").promises;
 var unirest = require("unirest");
+const { feedBackSchema } = require("../helper/validation_schema");
+const feedBack = require("../models/feedbackModule");
 
 router.get("/", async (req, res, next) => {
   if (req.session.userId) {
@@ -17,6 +19,7 @@ router.get("/", async (req, res, next) => {
     console.log(sectionList);
     //consolse.log("found");
     return res.render("index.ejs", {
+      isLogin: false,
       array: sectionList,
     });
   }
@@ -99,7 +102,7 @@ router.post("/login", function (req, res, next) {
 
             return res.send({
               Success: "Success!",
-              url: "/link/quiz/0326dcfc-ba65-4c5c-babc-42000dd597d0",
+              url: url,
             });
           } else {
             if (req.session.home) {
@@ -144,7 +147,10 @@ router.get("/profile", async (req, res, next) => {
     console.log(req.session.userId);
     let quiz = [];
 
-    const result = await resultModel.find({ userId: req.session.userId });
+    const result = await resultModel.find({
+      userId: req.session.userId,
+      section: { $ne: "link " },
+    });
     console.log(result);
 
     console.log(quiz);
@@ -169,7 +175,8 @@ router.get("/profile", async (req, res, next) => {
 router.post("/result", async (req, res, next) => {
   try {
     console.log(req.body);
-    const { questionLimit, quiz_id, score, section, percentage } = req.body;
+    const { questionLimit, quiz_id, score, section, percentage, level } =
+      req.body;
 
     const result = new resultModel({
       quiz_id: quiz_id,
@@ -178,6 +185,7 @@ router.post("/result", async (req, res, next) => {
       userId: req.session.userId,
       section: section,
       percentage: percentage,
+      level: level,
     });
 
     const existing = await resultModel.find({ quiz_id: quiz_id });
@@ -190,6 +198,25 @@ router.post("/result", async (req, res, next) => {
     }
 
     // const result = await resultModel.create()
+  } catch (error) {
+    next(error);
+    console.log(error);
+  }
+});
+router.get("/feedback", async (req, res, next) => {
+  return res.render("feedback.ejs");
+});
+router.post("/feedback", async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const inputs = await feedBackSchema.validateAsync(req.body);
+    const feed = new feedBack(inputs);
+    feed.save(function (err, feeds) {
+      if (err) console.log(err);
+      else console.log(feeds);
+    });
+    console.log(inputs);
+    res.send({ Success: "Feedback sent!" });
   } catch (error) {
     next(error);
     console.log(error);
@@ -218,12 +245,14 @@ router.get("/quiz/:section/:levels", async (req, res, next) => {
       const data = await QuestionModel.find({ quiz_id: quizName.quiz_id });
 
       console.log(section);
-      let questionLimits = 5;
+      let questionLimits = 10;
       if (
         section == "🌟 bca" ||
         section == "bca" ||
         section == "cs" ||
-        section == "gk"
+        section == "🌟cs" ||
+        section == "gk" ||
+        section == "🌟gk"
       ) {
         questionLimits = 20;
       }
@@ -234,6 +263,7 @@ router.get("/quiz/:section/:levels", async (req, res, next) => {
             title: quizName.quizName,
             questionLimit: questionLimits,
             section: section,
+            level: levels,
             filelocation: "/public/file.json",
           });
         })

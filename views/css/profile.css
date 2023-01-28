@@ -53,5 +53,15 @@ a:hover {
     padding: 10px 0;
 }
 #section-tbl {
-    width: 25%;
+    width: 20%;
+}
+#section-tbl-link {
+    width: 20%;
+}
+#section-tbl-admin {
+    width: 16.66%;
+}
+
+.tab{
+    margin-left: 30px;
 }

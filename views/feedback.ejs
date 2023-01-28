@@ -1,5 +1,8 @@
 
-    <%- include('../views/include/header.ejs')%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Quizbi feedback</title>
     <style>
       @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
 
@@ -62,7 +65,34 @@
         color:#cc6666;
       }
     </style>
-    <form>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    $( "#form" ).submit(function(event) {
+      event.preventDefault();
+
+      $.ajax({
+        type: 'POST',
+        url: '/feedback',
+        data: $('#form').serialize(),
+        dataType: "json",
+        success: function(response){
+          //alert("a");
+          //console.log(response.Success);
+          $('#form')[0].reset();
+
+          document.getElementById("check").innerHTML=response.Success;
+
+               },
+               error: function() {
+               }
+             })
+    });
+
+  });
+</script>
+    <form id="form">
         <h1>Feel free to drop us your feedback.</h1>
       <input
         name="name"
@@ -77,11 +107,12 @@
         placeholder="Email"
       />
       <textarea
-        name="text"
+        name="comment"
         class="feedback-input"
         placeholder="Comment"
       ></textarea>
       <input type="submit" value="SUBMIT"  id="liveToastBtn"/>
+      <h3 id="check" style="color: #fff; text-align: center;"></h3>
     </form>
   </body>
 </html>
