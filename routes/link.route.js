@@ -87,10 +87,11 @@ router.post("/editLink/:id", async (req, res, next) => {
     const data = await Link.findOne({ name: result.name });
     console.log(data);
     if (!data) {
-      const newQuiz = await Link.findOneAndUpdate({
-        id: id,
-        name: result.name,
-      });
+      const newQuiz = await Link.findByIdAndUpdate(
+        id,
+        { name: result.name },
+        { new: true }
+      );
       console.log("Success", newQuiz);
       id = "/link/";
       res.send({ Success: "Success!", quiz_id: id });

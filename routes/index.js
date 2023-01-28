@@ -174,7 +174,7 @@ router.get("/profile", async (req, res, next) => {
 
 router.post("/result", async (req, res, next) => {
   try {
-    console.log(req.body);
+    console.log("result", req.session.userId);
     const { questionLimit, quiz_id, score, section, percentage, level } =
       req.body;
 
@@ -188,7 +188,10 @@ router.post("/result", async (req, res, next) => {
       level: level,
     });
 
-    const existing = await resultModel.find({ quiz_id: quiz_id });
+    const existing = await resultModel.find({
+      userId: req.session.userId,
+      quiz_id: quiz_id,
+    });
 
     if (existing.length === 0) {
       result.save(function (err, data) {
@@ -303,7 +306,7 @@ router.post("/forgetpass", function (req, res, next) {
   User.findOne({ mobile: req.body.mobile }, function (err, data) {
     // console.log(data.otp, parseInt(req.body.otp));
     if (!data) {
-      res.send({ Success: "This Email Is not regestered!" });
+      res.send({ Success: "This Mobile number Is not regestered!" });
     } else {
       // res.send({"Success":"Success!"});
       if (req.body.password == req.body.passwordConf) {

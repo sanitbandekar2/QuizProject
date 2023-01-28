@@ -1,4 +1,3 @@
-<%- include('../views/include/header.ejs')%>
 <!DOCTYPE html>
 <!-- === Coding by CodingLab | www.codinglabweb.com === -->
 <html lang="en">
@@ -15,7 +14,7 @@
 
     <!-- ===== CSS ===== -->
     <link rel="stylesheet" href="./css/login.css" />
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!--<title>Login & Registration Form</title>-->
   </head>
   <body>
@@ -60,6 +59,7 @@
               <input
                 type="tel"
                 name="mobile"
+                id="mobile"
                 placeholder="Enter your mobile no."
                 required
               />
@@ -103,16 +103,25 @@
       const otpInput = document.getElementById("otpDiv");
       const button = document.getElementById("submit");
       const msgOTP = document.getElementById("msgOTP");
+      const mobile = document.getElementById("mobile");
 
-      button.addEventListener("click", () => {
-        setTimeout(function () {
-          msgOTP.innerText = "OTP sent on mobile number";
-          button.value = "Verfiy";
-          otpInput.hidden = false;
-          otpInput.innerHTML =
-            ' <input type="text" name="otp" placeholder="Enter OTP" required="" id="otp" class="form-control"/><br /> <i class="uil uil-lock icon"></i>';
-        }, 3000);
-      });
+      mobile.addEventListener("change", myFunction);
+
+      function myFunction() {
+        var x = mobile;
+        if (x.value.length >= 10) {
+          console.log(x.value.length);
+          button.addEventListener("click", () => {
+            setTimeout(function () {
+              msgOTP.innerText = "OTP sent on mobile number";
+              button.value = "Verfiy";
+              otpInput.hidden = false;
+              otpInput.innerHTML =
+                ' <input type="text" name="otp" placeholder="Enter OTP" required="" id="otp" class="form-control"/><br /> <i class="uil uil-lock icon"></i>';
+            }, 3000);
+          });
+        }
+      }
     </script>
   </body>
 </html>

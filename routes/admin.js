@@ -201,12 +201,14 @@ router.post("/editSection/:id", async (req, res, next) => {
     console.log(result.name);
 
     const data = await section.findOne({ name: result.name });
-    console.log(id);
+    const docId = id.trim();
+    console.log("doc ", docId, result);
     if (!data) {
-      const newsection = await section.findByIdAndUpdate({
-        _id: id.trim(),
-        name: result,
-      });
+      const newsection = await section.findByIdAndUpdate(
+        docId,
+        { $set: result },
+        { new: true }
+      );
       console.log("Success", newsection);
       id = "/admin/createSection";
       res.send({ Success: "Success!", quiz_id: id });
@@ -527,7 +529,7 @@ router.get("/logout", function (req, res, next) {
       if (err) {
         return next(err);
       } else {
-        return res.redirect("/");
+        return res.redirect("/admin/");
       }
     });
   }

@@ -10,8 +10,8 @@ include('../views/include/nav.ejs')%>
     <h1>Welcome <%= name %></h1>
   </div>
 
-  <!-- <div class="card">
-    <div class="card-header">Feedback</div> -->
+  <!-- <div class="card"> -->
+  <div class="pCard">Feedback</div>
   <% if (quizs.length != 0) { %> <% quizs.forEach(function(obj) { %>
   <div class="pCard" style="color: #fff; font-size: larger; padding: 10px 20px">
     <p>Name : <%= obj.name %></p>
