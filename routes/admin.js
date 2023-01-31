@@ -286,7 +286,7 @@ router.get("/deleteQuizName/:id", async (req, res, next) => {
       } else {
         const data = await Questiondb.deleteMany({ quiz_id: result.quiz_id });
         console.log(data);
-        const url = "/admin/profile";
+        const url = "/admin/create";
         res.redirect(url);
       }
     }

@@ -3,11 +3,22 @@
 <html lang="en">
   <head>
     <title>Quizbi feedback</title>
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
     <style>
       @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
+      :root{
+    --primary:#6E00FF;
+    --secondary:#1B2939;
+    --card:#253649;
+    --text:#fff;
+    --secondaryText: #000;
+}
 
       body {
-        background: rgb(30, 30, 40);
+        background: var(--secondary);
       }
       form {
         padding-top: 4%;
@@ -23,7 +34,7 @@
         border-radius: 5px;
         line-height: 22px;
         background-color: transparent;
-        border: 2px solid #cc6666;
+        border: 2px solid var(--primary);
         transition: all 0.3s;
         padding: 13px;
         margin-bottom: 15px;
@@ -33,7 +44,7 @@
       }
 
       .feedback-input:focus {
-        border: 2px solid #973636;
+        border: 2px solid var(--primary);
       }
 
       textarea {
@@ -45,7 +56,7 @@
       [type="submit"] {
         font-family: "Montserrat", Arial, Helvetica, sans-serif;
         width: 100%;
-        background: #cc6666;
+        background: var(--primary);
         border-radius: 5px;
         border: 0;
         cursor: pointer;
@@ -58,11 +69,27 @@
         font-weight: 700;
       }
       [type="submit"]:hover {
-        background: #cc4949;
+        background: var(--primary);
       }
 
       h1{
-        color:#cc6666;
+        color:var(--primary);
+      }
+      .nav {
+        margin: 10px 20px;
+      }
+      .nav span, i{
+        color: white;
+        font-size: larger;
+      }
+      .card{
+        padding: 30px;
+        background-color: var(--card);
+       border-radius: 10px;
+       box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      }
+      .card h1{
+        color: #fff;
       }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -92,27 +119,35 @@
 
   });
 </script>
-    <form id="form">
-        <h1>Feel free to drop us your feedback.</h1>
-      <input
-        name="name"
-        type="text"
-        class="feedback-input"
-        placeholder="Name"
-      />
-      <input
-        name="email"
-        type="text"
-        class="feedback-input"
-        placeholder="Email"
-      />
-      <textarea
-        name="comment"
-        class="feedback-input"
-        placeholder="Comment"
-      ></textarea>
-      <input type="submit" value="SUBMIT"  id="liveToastBtn"/>
-      <h3 id="check" style="color: #fff; text-align: center;"></h3>
-    </form>
+<div>
+  <div class="nav ">
+    <a href="/" >
+
+      <i class="fa fa-arrow-left"><span> Home</span></i>
+    </a>
+  </div>
+
+  <form id="form" class="card">
+      <h1>Feel free to drop us your feedback.</h1>
+    <input
+      name="name"
+      type="text"
+      class="feedback-input"
+      placeholder="Name"
+    />
+    <input
+      name="email"
+      type="text"
+      class="feedback-input"
+      placeholder="Email"
+    />
+    <textarea
+      name="comment"
+      class="feedback-input"
+      placeholder="Comment"
+    ></textarea>
+    <input type="submit" value="SUBMIT"  id="liveToastBtn"/>
+    <h3 id="check" style="color: #fff; text-align: center;"></h3>
+  </form>
   </body>
 </html>
