@@ -430,7 +430,7 @@ router.get("/profile", async (req, res, next) => {
     // console.log("data");
     // console.log(data);
 
-    const listQiz = await feedBack.find();
+    const listQiz = await feedBack.find().sort({ createdAt: -1 });
 
     if (!data) {
       res.redirect("/");

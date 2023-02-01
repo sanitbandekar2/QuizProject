@@ -48,20 +48,27 @@
                 <td id="section-tbl-admin"><%= obj.score %></td>
 
                 <td id="section-tbl-admin" >
-                  <div
-                  class="progress"
-                  role="progressbar"
-                  aria-label="Basic example"
-                  aria-valuenow="25"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                  >
-                  <div
-                  class="progress-bar progress-bar-striped progress-bar-animated <% if (obj.percentage < 25) { %>bg-danger<% }else if(obj.percentage < 50) {%>bg-warning <% }else if(obj.percentage < 75) {%>bg-info <% }else if(obj.percentage < 100) {%> bg-success<% } %> "
-                  style=<%= styles ="width:"+obj.percentage+"%"%> 
-                  >
-                  <%=  obj.percentage%>%
-                </div>
+                  <div class="row align-items-center">
+                    <div class="col-2 ">
+                      <%=obj.percentage  %>%
+                    </div>
+                    <div class="col-9">
+                      <div
+                      class="progress"
+                      role="progressbar"
+                      aria-label="Basic example"
+                      aria-valuenow="25"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      >
+                      <div
+                      class="progress-bar progress-bar-striped progress-bar-animated <% if (obj.percentage < 25) { %>bg-danger<% }else if(obj.percentage < 50) {%>bg-warning <% }else if(obj.percentage < 75) {%>bg-info <% }else if(obj.percentage < 100) {%> bg-success<% } %> "
+                      style=<%= styles ="width:"+obj.percentage+"%"%> 
+                      >
+                  
+                    </div>
+                    </div>
+                  </div>
               </div>
             </td>
           </tr>
