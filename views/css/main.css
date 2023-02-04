@@ -5,6 +5,10 @@
     --text:#fff;
     --secondaryText: #000;
 }
+body {
+    background-color: var(--secondary);
+}
+
 nav {
     background-color: var(--primary);
   
@@ -21,11 +25,10 @@ nav {
     color: black;
 }
 
-.main-body{
-    background-color: var(--secondary);
-    min-height: 200vh;
-    max-height: 100vh;
-    padding-bottom: 10vh;
+
+.container-sm{
+    height: 100%;
+    padding-bottom: 5rem;
 }
 .card{
     background-color: var(--card);
