@@ -101,11 +101,11 @@
 
 			<form id="form" method="post">
 				<div class="input-field">
-					<input type="text" name="email" placeholder="Enter your email" required>
+					<input type="email" name="email" placeholder="Enter your email" required>
 					<i class="uil uil-envelope icon"></i>
 				</div>
 				<div class="input-field">
-					<input type="password" class="password" name="password" placeholder="Enter your password" required>
+					<input type="password" class="password" name="password" minlength="4" placeholder="Enter your password" required>
 					<i class="uil uil-lock icon"></i>
 					<i class="uil uil-eye-slash showHidePw"></i>
 				</div>
@@ -141,20 +141,20 @@
 					<i class="uil uil-user"></i>
 				</div>
 				<div class="input-field">
-					<input type="text" name="email" placeholder="Enter your email" required>
+					<input type="email" name="email" placeholder="Enter your email" required>
 					<i class="uil uil-envelope icon"></i>
 				</div>
 				<div class="input-field">
-					<input type="password" name="password" class="password" placeholder="Create a password" required>
+					<input type="password" name="password" class="password" placeholder="Create a password" minlength="4" required>
 					<i class="uil uil-lock icon"></i>
 				</div>
 				<div class="input-field">
-					<input type="password" name="passwordConf" class="password" placeholder="Confirm a password" required>
+					<input type="password" name="passwordConf" class="password" placeholder="Confirm a password" minlength="4" required>
 					<i class="uil uil-lock icon"></i>
 					<i class="uil uil-eye-slash showHidePw"></i>
 				</div>
 				<div class="input-field">
-					<input type="tel" name="mobile" class="mobile" placeholder="Enter your mobile number" required>
+					<input type="tel" name="mobile" id="mobile" class="mobile" placeholder="Enter your mobile number" minlength="10"  required>
 					<i class="uil uil-phone icon"></i>
 				</div>
 
@@ -166,7 +166,7 @@
 				</div> -->
 
 				<div class="input-field button">
-					<input type="submit" value="Signup">
+					<input type="submit" value="Signup" id="Signupbtn">
 				</div>
 			</form>
 
@@ -177,7 +177,7 @@
 			</div>
 		</div>
 	</div>
-	<div style="text-align: center;">
+	<div class="check" style="text-align: center;">
 		<span id="check">
 	
 		</span>
@@ -195,6 +195,24 @@
       pwFields = document.querySelectorAll(".password"),
       signUp = document.querySelector(".signup-link"),
       login = document.querySelector(".login-link");
+      const mobile = document.querySelector(".mobile");
+      const Signupbtn = document.getElementById("Signupbtn");
+
+	  mobile.addEventListener("change", length);
+	  Signupbtn.addEventListener("change", length);
+
+
+	
+	  function length() {
+		var x = mobile;
+        if (x.value.length != 10) {
+			console.log(x.value.length);
+			document.getElementById("check").innerHTML="Mobile Number is not valid";
+			setTimeout(function () {
+				document.getElementById("check").innerHTML="";
+			},3000);
+		}
+	  }
 
     //   js code to show/hide password and change icon
     pwShowHide.forEach(eyeIcon =>{

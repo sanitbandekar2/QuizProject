@@ -50,3 +50,7 @@ i{
     border-radius: 10px;
     margin-bottom: 10px;
 }
+.nav {
+    font-size: larger;
+    padding: 1rem 3rem 0 3rem;
+}

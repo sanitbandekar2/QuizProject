@@ -64,7 +64,7 @@
   }
   
   .container.active .forms{
-      height: 600px;
+      height: 650px;
   }
   .container .form .title{
       position: relative;
@@ -184,3 +184,9 @@
       margin-top: 30px;
       text-align: center;
   }
+  .check {
+    background-color: rgb(124, 4, 4);
+    color: #fff;
+  }
+
+  

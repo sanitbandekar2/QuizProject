@@ -59,7 +59,7 @@ router.post("/signup", function (req, res, next) {
               password: personInfo.password,
               passwordConf: personInfo.passwordConf,
               mobile: personInfo.mobile,
-              otp: "123",
+              otp: "12356",
             });
 
             newPerson.save(function (err, Person) {
@@ -301,14 +301,13 @@ router.get("/forgetpass", function (req, res, next) {
 
 router.post("/forgetpass", function (req, res, next) {
   console.log(req.body);
-  let status = "";
+  let status = "otpSent";
   //console.log(req.body);
   User.findOne({ mobile: req.body.mobile }, function (err, data) {
     // console.log(data.otp, parseInt(req.body.otp));
     if (!data) {
       res.send({ Success: "This Mobile number Is not regestered!" });
     } else {
-      // res.send({"Success":"Success!"});
       if (req.body.password == req.body.passwordConf) {
         if (!req.body.otp) {
           const otp = Math.floor(Math.random() * 8999 + 1000);
@@ -327,7 +326,7 @@ router.post("/forgetpass", function (req, res, next) {
             try {
               const msg = resp.body;
               console.log("msg", msg);
-              // res.status(201).json({ message: "result", data: msg[0] });
+              // res.send({ Success: "Success!" });
             } catch (error) {
               console.log(error);
             }

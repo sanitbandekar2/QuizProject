@@ -19,6 +19,7 @@
   </head>
   <body>
     <script type="text/javascript">
+      const otpSent = false;
       $(document).ready(function () {
         $("#form").submit(function (event) {
           event.preventDefault();
@@ -42,6 +43,15 @@
                 $("#form")[0].reset();
                 document.getElementById("aa").click();
               }
+              if (response.Success == "otpSent") {
+                const msgOTP = document.getElementById("msgOTP");
+                const otpInput = document.getElementById("otpDiv");
+                 msgOTP.innerText = "OTP sent on mobile number";
+    
+                otpInput.hidden = false;
+                otpInput.innerHTML =
+                  ' <input type="text" name="otp" placeholder="Enter OTP" required="" id="otp" class="form-control"/><br /> <i class="uil uil-lock icon"></i>';
+              }
             },
             error: function () {},
           });
@@ -61,6 +71,8 @@
                 name="mobile"
                 id="mobile"
                 placeholder="Enter your mobile no."
+                maxlength="10"
+                minlength="10"
                 required
               />
               <i class="uil uil-phone icon"></i>
@@ -70,6 +82,7 @@
                 type="password"
                 class="password"
                 name="password"
+                minlength="4"
                 placeholder="Enter your password"
                 required
               />
@@ -82,6 +95,7 @@
                 placeholder="Confirm Password"
                 required=""
                 class="form-control"
+                minlength="4"
               /><br />
               <i class="uil uil-lock icon"></i>
             </div>
@@ -94,7 +108,7 @@
           </form>
         </div>
       </div>
-      <div style="text-align: center">
+      <div class="check" style="text-align: center">
         <span id="check"> </span>
       </div>
     </div>
@@ -104,22 +118,21 @@
       const button = document.getElementById("submit");
       const msgOTP = document.getElementById("msgOTP");
       const mobile = document.getElementById("mobile");
+      
 
       mobile.addEventListener("change", myFunction);
 
       function myFunction() {
         var x = mobile;
-        if (x.value.length >= 10) {
+        if (x.value.length != 10) {
+          document.getElementById("check").innerHTML="Mobile Number is not valid";
           console.log(x.value.length);
-          button.addEventListener("click", () => {
-            setTimeout(function () {
-              msgOTP.innerText = "OTP sent on mobile number";
-              button.value = "Verfiy";
-              otpInput.hidden = false;
-              otpInput.innerHTML =
-                ' <input type="text" name="otp" placeholder="Enter OTP" maxlength="10" required="" id="otp" class="form-control"/><br /> <i class="uil uil-lock icon"></i>';
-            }, 3000);
-          });
+          if (otpSent) {
+        
+              document.getElementById("check").innerHTML="";
+             
+
+          }
         }
       }
     </script>
